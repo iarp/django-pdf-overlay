@@ -22,7 +22,7 @@ fs = FileSystemStorage(location=BASE_PDF_LOCAL_STORAGE_LOCATION)
 
 
 def get_field_data(attribute_name, object_name=None, default=None, **kwargs):
-    
+
     if object_name:
         if object_name in kwargs:
             tmp = kwargs[object_name]
@@ -172,11 +172,15 @@ class PDF(models.Model):
         template_pdf = PdfFileReader(self.file.file)
 
         for x in range(template_pdf.getNumPages()):
-            page, _ = self.pages.get_or_create(number=x)
+            _, _, width, height = template_pdf.getPage(x).mediaBox
+            page, _ = self.pages.update_or_create(number=x, defaults={
+                'width': width,
+                'height': height,
+            })
             page.convert_to_image(force=True)
 
 
-class PDFPage(models.Model):
+class Page(models.Model):
 
     class Meta:
         unique_together = ('pdf', 'number')
@@ -185,6 +189,9 @@ class PDFPage(models.Model):
     pdf = models.ForeignKey(PDF, on_delete=models.CASCADE, related_name='pages')
     number = models.PositiveIntegerField(default=0)
     image = models.FileField(upload_to='forms/layouts/', blank=True, null=True)
+
+    width = models.PositiveIntegerField(default=612)
+    height = models.PositiveIntegerField(default=792)
 
     def get_layout_image(self):
         try:
@@ -223,12 +230,12 @@ class PDFPage(models.Model):
         return False
 
 
-class PDFField(models.Model):
+class Field(models.Model):
 
     class Meta:
         unique_together = ('page', 'name')
 
-    page = models.ForeignKey(PDFPage, on_delete=models.CASCADE, related_name='fields')
+    page = models.ForeignKey(Page, on_delete=models.CASCADE, related_name='fields')
 
     name = models.CharField(max_length=255)
     x = models.IntegerField(default=10)
