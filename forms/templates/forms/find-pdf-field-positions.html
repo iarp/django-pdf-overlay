@@ -1,0 +1,181 @@
+{% extends 'root.html' %}
+{% load static %}
+
+{% block content %}
+
+    <div class="row">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-title">
+                <div class="caption font-dark">
+                    <i class="icon-settings font-dark"></i>
+                    <span class="caption-subject bold uppercase">PDF Field Layout</span>
+                </div>
+                <div class="tools"></div>
+            </div>
+            <div class="portlet-body">
+
+                <p>Drag and drop the fields as needed, text position is based off of bottom left corner.</p>
+
+                <canvas id="texts" width="1224" height="1584" style="background: url('{{ pdf.get_layout_image }}'); background-size: 100% 100%"></canvas>
+
+                <form method="post" id="field-positions">{% csrf_token %}
+                    <div class="form-actions">
+                        <input type="submit" name="submit" value="Save" class="btn btn-primary"/>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block footer %}
+    <script type="text/javascript">
+
+        // If we expand the image, need to keep the output values relative to 8.5x11 sheet
+        var size_offset = 2;
+
+        var canvas = document.getElementById("texts");
+        //canvas.width = 612 * size_offset;
+        //canvas.height = 792 * size_offset;
+        var ctx = canvas.getContext("2d");
+
+        var $canvas = $("#texts");
+        var canvasOffset = $canvas.offset();
+        var offsetX = canvasOffset.left;
+        var offsetY = canvasOffset.top;
+        var scrollX = $canvas.scrollLeft();
+        var scrollY = $canvas.scrollTop();
+
+        // variables to save last mouse position
+        // used to see how far the user dragged the mouse
+        // and then move the text by that distance
+        var startX;
+        var startY;
+
+        // some text objects
+        var texts = [];
+
+        // some test texts
+        // texts.push({text: "Hello", x: 20, y: 20});
+        // texts.push({text: "World", x: 20, y: 70});
+        {% for field in fields %}
+            texts.push({
+                text: "{{ field.name }}",
+                name: "{{ field.name }}",
+                default: "{{ field.default }}",
+                x: {{ field.x }} * size_offset,
+                y: {{ field.y }} * size_offset,
+                font_size: {{field.font_size}} * size_offset,
+                font_font: "{{ field.font }}",
+                font_color: "{{ field.font_color }}",
+            });
+        {% endfor %}
+
+        for (var i = 0; i < texts.length; i++) {
+            var text = texts[i];
+            ctx.font = text.font_size + "px " + text.font_font;
+            text.width = ctx.measureText(text.text).width;
+            text.height = text.font_size;
+
+            $('<input>').attr({type: 'hidden', id: text.name + '_x', name: text.name + '_x', value: Math.round(text.x / size_offset)}).appendTo('#field-positions');
+            $('<input>').attr({type: 'hidden', id: text.name + '_y', name: text.name + '_y', value: Math.round(text.y / size_offset)}).appendTo('#field-positions');
+            $('<input>').attr({type: 'hidden', id: text.name + '_default', name: text.name + '_default', value: text.default}).appendTo('#field-positions');
+            $('<input>').attr({type: 'hidden', id: text.name + '_font_size', name: text.name + '_font_size', value: Math.round(text.font_size / size_offset)}).appendTo('#field-positions');
+            $('<input>').attr({type: 'hidden', id: text.name + '_font', name: text.name + '_font', value: text.font_font}).appendTo('#field-positions');
+            $('<input>').attr({type: 'hidden', id: text.name + '_font_color', name: text.name + '_font_color', value: text.font_color}).appendTo('#field-positions');
+        }
+
+        // this var will hold the index of the selected text
+        var selectedText = -1;
+
+        // START: draw all texts to the canvas
+        draw();
+
+        // clear the canvas draw all texts
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (var i = 0; i < texts.length; i++) {
+                var text = texts[i];
+                ctx.font = text.font_size + "px " + text.font_font;
+                ctx.fillStyle = text.font_color;
+                ctx.fillText(text.text, text.x, text.y);
+            }
+        }
+
+        // test if x,y is inside the bounding box of texts[textIndex]
+        function textHittest(x, y, textIndex) {
+            var text = texts[textIndex];
+            return (x >= text.x &&
+                x <= text.x + text.width &&
+                y >= text.y - text.height &&
+                y <= text.y);
+        }
+
+        function getMousePos(canvas, evt) {
+            var rect = canvas.getBoundingClientRect();
+            return {
+                x: evt.clientX - rect.left,
+                y: evt.clientY - rect.top
+            };
+        }
+
+        // handle mousedown events
+        // iterate through texts[] and see if the user
+        // mousedown'ed on one of them
+        // If yes, set the selectedText to the index of that text
+        function handleMouseDown(e) {
+            e.preventDefault();
+
+            mpos = getMousePos(canvas, e);
+
+            // Put your mousedown stuff here
+            for (var i = 0; i < texts.length; i++) {
+                if (textHittest(mpos.x, mpos.y, i)) {
+                    selectedText = i;
+                }
+            }
+        }
+
+        // done dragging
+        function handleMouseUp(e) {
+            e.preventDefault();
+            selectedText = -1;
+        }
+
+        // handle mousemove events
+        // calc how far the mouse has been dragged since
+        // the last mousemove event and move the selected text
+        // by that distance
+        function handleMouseMove(e) {
+            if (selectedText < 0) {return;}
+            e.preventDefault();
+
+            mpos = getMousePos(canvas, e);
+
+            var text = texts[selectedText];
+            text.x = mpos.x;
+            text.y = mpos.y;
+            document.getElementById(text.text + '_x').value = Math.round(text.x / size_offset);
+            document.getElementById(text.text + '_y').value = Math.round(text.y / size_offset);
+            draw();
+        }
+
+        // listen for mouse events
+        $("#texts").mousedown(function (e) {
+            handleMouseDown(e);
+        });
+        $("#texts").mousemove(function (e) {
+            handleMouseMove(e);
+        });
+        $("#texts").mouseup(function (e) {
+            handleMouseUp(e);
+        });
+        $("#texts").mouseout(function (e) {
+            handleMouseUp(e);
+        });
+
+    </script>
+{% endblock %}

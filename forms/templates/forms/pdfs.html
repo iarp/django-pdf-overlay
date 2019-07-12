@@ -1,0 +1,30 @@
+{% extends 'root.html' %}
+
+{% block content %}
+
+    <div class="row">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-title">
+                <div class="caption font-dark">
+                    <i class="icon-settings font-dark"></i>
+                    <span class="caption-subject bold uppercase">Fillable PDF's</span>
+                </div>
+                <div class="tools"></div>
+            </div>
+            <div class="portlet-body">
+
+                <ul>
+                    {% for pdf in pdfs %}
+                        <li>
+                            {{ pdf.name }} - <a href="{% url 'fillable:pdf-layout' pdf_id=pdf.pk %}">layout</a> - <a href="{% url 'fillable:pdf-fields' pdf_id=pdf.pk %}">{{ pdf.pdffield_set.count }} fields</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+        </div>
+    </div>
+    </div>
+
+{% endblock %}
