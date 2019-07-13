@@ -12,12 +12,13 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 from . import validators
 
 ordinal = lambda n: "%d%s" % (n, "tsnrhtdd"[(math.floor(n / 10) % 10 != 1) * (n % 10 < 4) * n % 10::4])
 
-BASE_PDF_LOCAL_STORAGE_LOCATION = os.path.join(settings.BASE_DIR, 'forms', 'pdf-base')
+BASE_PDF_LOCAL_STORAGE_LOCATION = os.path.join(settings.BASE_DIR, 'media', 'forms', 'documents')
 fs = FileSystemStorage(location=BASE_PDF_LOCAL_STORAGE_LOCATION)
 
 
@@ -45,11 +46,7 @@ def get_field_data(attribute_name, object_name=None, default=None, **kwargs):
     return default
 
 
-class PDF(models.Model):
-
-    class Meta:
-        verbose_name = 'PDF'
-        verbose_name_plural = 'PDFs'
+class Document(models.Model):
 
     name = models.CharField(max_length=255, unique=True)
     file = models.FileField(storage=fs, validators=[validators.validate_pdf])
@@ -179,19 +176,28 @@ class PDF(models.Model):
             })
             page.convert_to_image(force=True)
 
+    def get_absolute_url(self):
+        return reverse('forms:document-details', args=[self.pk])
+
 
 class Page(models.Model):
 
     class Meta:
-        unique_together = ('pdf', 'number')
+        unique_together = ('document', 'number')
         ordering = ['number']
 
-    pdf = models.ForeignKey(PDF, on_delete=models.CASCADE, related_name='pages')
+    document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='pages')
     number = models.PositiveIntegerField(default=0)
     image = models.FileField(upload_to='forms/layouts/', blank=True, null=True)
 
     width = models.PositiveIntegerField(default=612)
     height = models.PositiveIntegerField(default=792)
+
+    def get_absolute_url(self):
+        return reverse('forms:document-page-layout', args=[self.document.pk, self.pk])
+
+    def get_fields_editor_url(self):
+        return reverse('forms:document-page-fields', args=[self.document.pk, self.pk])
 
     def get_layout_image(self):
         try:
@@ -201,7 +207,7 @@ class Page(models.Model):
                 return self.image.url
 
     def convert_to_image(self, force=False):
-        filepath_raw, ext = self.pdf.file.path.rsplit('.', 1)
+        filepath_raw, ext = self.document.file.path.rsplit('.', 1)
 
         if not force and self.image:
             return True
@@ -212,12 +218,12 @@ class Page(models.Model):
         if os.name == 'nt':
             cmd_path = ['magick.exe', 'convert']
 
-        commands = cmd_path + ['-density', '300', '-flatten', f'{self.pdf.file.path}[{self.number}]', image_file]
+        commands = cmd_path + ['-density', '300', '-flatten', f'{self.document.file.path}[{self.number}]', image_file]
 
         process = subprocess.Popen(commands, stdout=subprocess.PIPE)
         process.wait()
 
-        tmp_image_name = self.pdf.file.name.rsplit('.', 1)
+        tmp_image_name = self.document.file.name.rsplit('.', 1)
         image_filename = f'{tmp_image_name[0]}_{self.number}.jpg'
 
         if os.path.isfile(image_file):
@@ -243,7 +249,7 @@ class Field(models.Model):
     default = models.CharField(max_length=255, blank=True)
     system_info = models.CharField(max_length=255, blank=True)
 
-    obj_name = models.CharField(max_length=255, blank=True)
+    obj_name = models.CharField(max_length=255, blank=True, help_text='object.attribute usage when rending data in the pdf.')
 
     font_size = models.IntegerField(default=12)
     font_color = models.CharField(max_length=50, default='black')
@@ -251,11 +257,6 @@ class Field(models.Model):
 
     inserted = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-
-    # The user can change the x and y all they want, but if something goes wrong
-    # and they want to restore to defaults, need to store those somewhere...
-    system_default_x = models.IntegerField(default=10)
-    system_default_y = models.IntegerField(default=10)
 
     def get_default(self):
         if not self.default:

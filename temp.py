@@ -8,11 +8,19 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "django_pdf.settings")
 
 django.setup()
 
-from forms.models import PDF
+from django.utils import timezone
 
-# PDF.objects.all().delete()
+from forms.models import Document, Field
 
-p = PDF.objects.first()  # type: PDF
+f = Field.objects.first()
+f.inserted = timezone.now()
+f.updated = timezone.now()
+f.save()
+exit()
+
+# Document.objects.all().delete()
+
+p = Document.objects.first()  # type: Document
 template_pdf = PdfFileReader(p.file.file)
 page = template_pdf.getPage(0)
 print(page)
@@ -61,6 +69,6 @@ print(page.mediaBox)
 # output = get_field_data(
 #     attribute_name='name',
 #     something=blahs,
-#     PDF=p
+#     Document=p
 # )
 # print('output', output)

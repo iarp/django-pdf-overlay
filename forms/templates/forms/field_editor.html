@@ -1,0 +1,30 @@
+{% extends 'forms/base.html' %}
+{% load bootstrap4 %}
+
+{% block content %}
+
+    <h1><a href="{{ document.get_absolute_url }}">{{ document.name }}</a>
+        <small class="text-muted">Page #{{ page.number }} Field Editor</small>
+        <a href="{{ page.get_absolute_url }}" class="btn btn-success">Field Layout</a></h1>
+
+    <form class="form-horizontal" method="post">{% csrf_token %}
+        {{ formset.management_form }}
+        {% for form in formset %}
+            {% if form.instance.pk is None %}
+                <div class="form-group">
+                    <h3>New Field Form</h3>
+                    The new field will appear in the top left corner of the Field Layout screen.
+                </div>
+            {% endif %}
+            <div class="form-group">
+                {% bootstrap_form form layout='horizontal' required_css_class='required' %}
+            <hr />
+            </div>
+        {% endfor %}
+
+        {% buttons %}
+            <input type="submit" name="submit" value="Save" class="btn btn-primary">
+        {% endbuttons %}
+    </form>
+
+{% endblock %}

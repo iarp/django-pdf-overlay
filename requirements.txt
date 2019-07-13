@@ -1,2 +1,4 @@
 pypdf2
 reportlab
+django
+django-bootstrap4

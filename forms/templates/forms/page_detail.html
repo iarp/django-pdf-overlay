@@ -1,33 +1,30 @@
-{% extends 'root.html' %}
-{% load static %}
+{% extends 'forms/base.html' %}
+
+{% block header %}
+    <style type="text/css">
+    #texts {
+        border: 1px dotted;
+        background: url({{ object.image.url }});
+        background-size: 100% 100%
+    }
+    </style>
+{% endblock %}
 
 {% block content %}
 
-    <div class="row">
-    <div class="col-md-12">
-        <div class="portlet light bordered">
-            <div class="portlet-title">
-                <div class="caption font-dark">
-                    <i class="icon-settings font-dark"></i>
-                    <span class="caption-subject bold uppercase">PDF Field Layout</span>
-                </div>
-                <div class="tools"></div>
-            </div>
-            <div class="portlet-body">
+    <h1><a href="{{ object.document.get_absolute_url }}">{{ object.document.name }}</a>
+        <small class="text-muted">Page #{{ object.number }} Field Layout</small>
+        <a href="{{ object.get_fields_editor_url }}" class="btn btn-success">Field Editor</a></h1>
 
-                <p>Drag and drop the fields as needed, text position is based off of bottom left corner.</p>
+    <p>Drag and drop the fields as needed, text position is based off of bottom left corner of the field itself.</p>
 
-                <canvas id="texts" width="1224" height="1584" style="background: url('{{ pdf.get_layout_image }}'); background-size: 100% 100%"></canvas>
+    <canvas id="texts" width="{{ object.width }}" height="{{ object.height }}"></canvas>
 
-                <form method="post" id="field-positions">{% csrf_token %}
-                    <div class="form-actions">
-                        <input type="submit" name="submit" value="Save" class="btn btn-primary"/>
-                    </div>
-                </form>
-
-            </div>
+    <form method="post" id="field-positions">{% csrf_token %}
+        <div class="form-actions">
+            <input type="submit" name="submit" value="Save Field Layout" class="btn btn-primary"/>
         </div>
-    </div>
+    </form>
 
 {% endblock %}
 
@@ -38,6 +35,10 @@
         var size_offset = 2;
 
         var canvas = document.getElementById("texts");
+
+        canvas.width = canvas.width * size_offset;
+        canvas.height = canvas.height * size_offset;
+
         //canvas.width = 612 * size_offset;
         //canvas.height = 792 * size_offset;
         var ctx = canvas.getContext("2d");
@@ -61,8 +62,9 @@
         // some test texts
         // texts.push({text: "Hello", x: 20, y: 20});
         // texts.push({text: "World", x: 20, y: 70});
-        {% for field in fields %}
+        {% for field in object.fields.all %}
             texts.push({
+                pk: {{ field.pk }},
                 text: "{{ field.name }}",
                 name: "{{ field.name }}",
                 default: "{{ field.default }}",
@@ -80,12 +82,12 @@
             text.width = ctx.measureText(text.text).width;
             text.height = text.font_size;
 
-            $('<input>').attr({type: 'hidden', id: text.name + '_x', name: text.name + '_x', value: Math.round(text.x / size_offset)}).appendTo('#field-positions');
-            $('<input>').attr({type: 'hidden', id: text.name + '_y', name: text.name + '_y', value: Math.round(text.y / size_offset)}).appendTo('#field-positions');
-            $('<input>').attr({type: 'hidden', id: text.name + '_default', name: text.name + '_default', value: text.default}).appendTo('#field-positions');
-            $('<input>').attr({type: 'hidden', id: text.name + '_font_size', name: text.name + '_font_size', value: Math.round(text.font_size / size_offset)}).appendTo('#field-positions');
-            $('<input>').attr({type: 'hidden', id: text.name + '_font', name: text.name + '_font', value: text.font_font}).appendTo('#field-positions');
-            $('<input>').attr({type: 'hidden', id: text.name + '_font_color', name: text.name + '_font_color', value: text.font_color}).appendTo('#field-positions');
+            $('<input>').attr({type: 'hidden', id: text.name + '_x', name: text.pk + '_x', value: Math.round(text.x / size_offset)}).appendTo('#field-positions');
+            $('<input>').attr({type: 'hidden', id: text.name + '_y', name: text.pk + '_y', value: Math.round(text.y / size_offset)}).appendTo('#field-positions');
+            $('<input>').attr({type: 'hidden', id: text.name + '_default', name: text.pk + '_default', value: text.default}).appendTo('#field-positions');
+            $('<input>').attr({type: 'hidden', id: text.name + '_font_size', name: text.pk + '_font_size', value: Math.round(text.font_size / size_offset)}).appendTo('#field-positions');
+            $('<input>').attr({type: 'hidden', id: text.name + '_font', name: text.pk + '_font', value: text.font_font}).appendTo('#field-positions');
+            $('<input>').attr({type: 'hidden', id: text.name + '_font_color', name: text.pk + '_font_color', value: text.font_color}).appendTo('#field-positions');
         }
 
         // this var will hold the index of the selected text
@@ -164,16 +166,16 @@
         }
 
         // listen for mouse events
-        $("#texts").mousedown(function (e) {
+        $canvas.mousedown(function (e) {
             handleMouseDown(e);
         });
-        $("#texts").mousemove(function (e) {
+        $canvas.mousemove(function (e) {
             handleMouseMove(e);
         });
-        $("#texts").mouseup(function (e) {
+        $canvas.mouseup(function (e) {
             handleMouseUp(e);
         });
-        $("#texts").mouseout(function (e) {
+        $canvas.mouseout(function (e) {
             handleMouseUp(e);
         });
 

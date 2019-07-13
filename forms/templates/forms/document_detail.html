@@ -1,0 +1,31 @@
+{% extends 'forms/base.html' %}
+
+{% block content %}
+    <div style="float: right;">
+        <a href="{% url 'forms:document-delete' pk=object.pk %}" class="btn btn-danger">Delete</a>
+    </div>
+    <h1>{{ object.name }}</h1>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Page #</th>
+            <th scope="col">Image</th>
+            <th scope="col">Edit Layout</th>
+            <th scope="col">Edit Field(s)</th>
+        </tr>
+        </thead>
+        <tbody>
+
+            {% for page in object.pages.all %}
+                <tr>
+                    <td scope="row">{{ page.number }}</td>
+                    <td><a href="{{ page.image.url }}"><img src="{{ page.image.url }}" style="max-width: 150px;"/></a></td>
+                    <td><a class="btn btn-primary" href="{{ page.get_absolute_url }}">Edit Field Layout</a></td>
+                    <td><a class="btn btn-info" href="{{ page.get_fields_editor_url }}">Edit {{ page.fields.count }} field{{ page.fields.count|pluralize:",s" }}</a></td>
+                </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+
+{% endblock %}

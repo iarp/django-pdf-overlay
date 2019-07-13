@@ -1,0 +1,15 @@
+{% extends 'forms/base.html' %}
+
+{% block content %}
+
+    <h1>Confirm Deletion of {{ object.name }}</h1>
+
+    <form method="post" enctype="multipart/form-data">{% csrf_token %}
+        {{ form.as_p }}
+        <div class="form-actions">
+            <input type="submit" name="submit" value="Delete" class="btn btn-danger">
+            <a href="{{ object.get_absolute_url }}" class="btn btn-primary">Cancel</a>
+        </div>
+    </form>
+
+{% endblock %}
