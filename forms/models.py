@@ -13,6 +13,7 @@ from django.core.files.storage import FileSystemStorage
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.utils.functional import cached_property
 
 from . import validators
 
@@ -161,7 +162,7 @@ class Document(models.Model):
     def render_as_response(self, filename, pages=None):
         file = self.render_as_document(pages=pages)
         response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
         response.write(file.read())
         return response
 
@@ -174,10 +175,17 @@ class Document(models.Model):
                 'width': width,
                 'height': height,
             })
-            page.convert_to_image(force=True)
+            page.convert_to_image()
 
     def get_absolute_url(self):
         return reverse('forms:document-details', args=[self.pk])
+
+    @cached_property
+    def total_fields_counter(self):
+        c = 0
+        for p in self.pages.all():
+            c += p.fields.count()
+        return c
 
 
 class Page(models.Model):
@@ -193,11 +201,17 @@ class Page(models.Model):
     width = models.PositiveIntegerField(default=612)
     height = models.PositiveIntegerField(default=792)
 
+    def __str__(self):
+        return '{} Page #{}'.format(self.document, self.number)
+
     def get_absolute_url(self):
         return reverse('forms:document-page-layout', args=[self.document.pk, self.pk])
 
     def get_fields_editor_url(self):
         return reverse('forms:document-page-fields', args=[self.document.pk, self.pk])
+
+    def get_image_regen_url(self):
+        return reverse('forms:document-page-regen-image', args=[self.document.pk, self.pk])
 
     def get_layout_image(self):
         try:
@@ -206,25 +220,26 @@ class Page(models.Model):
             if self.convert_to_image():
                 return self.image.url
 
-    def convert_to_image(self, force=False):
+    def convert_to_image(self):
         filepath_raw, ext = self.document.file.path.rsplit('.', 1)
 
-        if not force and self.image:
-            return True
+        if self.image:
+            self.image.delete()
 
-        image_file = f'{filepath_raw}_{self.number}.jpg'
+        image_file = '{}_{}.jpg'.format(filepath_raw, self.number)
 
         cmd_path = ['/usr/bin/convert']
         if os.name == 'nt':
             cmd_path = ['magick.exe', 'convert']
 
-        commands = cmd_path + ['-density', '300', '-flatten', f'{self.document.file.path}[{self.number}]', image_file]
+        wanted_page = '{}[{}]'.format(self.document.file.path, self.number)
+        commands = cmd_path + ['-density', '300', '-flatten', wanted_page, image_file]
 
         process = subprocess.Popen(commands, stdout=subprocess.PIPE)
         process.wait()
 
         tmp_image_name = self.document.file.name.rsplit('.', 1)
-        image_filename = f'{tmp_image_name[0]}_{self.number}.jpg'
+        image_filename = '{}_{}.jpg'.format(tmp_image_name[0], self.number)
 
         if os.path.isfile(image_file):
             with open(image_file, 'rb') as fo:
@@ -249,7 +264,7 @@ class Field(models.Model):
     default = models.CharField(max_length=255, blank=True)
     system_info = models.CharField(max_length=255, blank=True)
 
-    obj_name = models.CharField(max_length=255, blank=True, help_text='object.attribute usage when rending data in the pdf.')
+    obj_name = models.CharField(max_length=255, blank=True)
 
     font_size = models.IntegerField(default=12)
     font_color = models.CharField(max_length=50, default='black')
@@ -257,6 +272,9 @@ class Field(models.Model):
 
     inserted = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return '{}.{}'.format(self.page, self.name)
 
     def get_default(self):
         if not self.default:

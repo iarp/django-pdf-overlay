@@ -19,7 +19,7 @@
             {% for page in object.pages.all %}
                 <tr>
                     <td scope="row">{{ page.number }}</td>
-                    <td><a href="{{ page.image.url }}"><img src="{{ page.image.url }}" style="max-width: 150px;"/></a></td>
+                    <td><a href="{{ page.image.url }}"><img src="{{ page.image.url }}" style="max-width: 150px;" alt="{{ page }}"/></a></td>
                     <td><a class="btn btn-primary" href="{{ page.get_absolute_url }}">Edit Field Layout</a></td>
                     <td><a class="btn btn-info" href="{{ page.get_fields_editor_url }}">Edit {{ page.fields.count }} field{{ page.fields.count|pluralize:",s" }}</a></td>
                 </tr>

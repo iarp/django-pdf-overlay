@@ -15,6 +15,10 @@
                     <h3>New Field Form</h3>
                     The new field will appear in the top left corner of the Field Layout screen.
                 </div>
+            {% else %}
+                <div class="form-group">
+                    <h3>Field: {{ form.instance.name }}</h3>
+                </div>
             {% endif %}
             <div class="form-group">
                 {% bootstrap_form form layout='horizontal' required_css_class='required' %}

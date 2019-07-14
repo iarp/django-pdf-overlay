@@ -11,4 +11,5 @@ urlpatterns = [
     path('<int:pk>/delete/', views.DocumentDeleteView.as_view(), name='document-delete'),
     path('<int:document_pk>/<int:pk>/layout/', views.DocumentPageDetailView.as_view(), name='document-page-layout'),
     path('<int:document_pk>/<int:pk>/fields/', views.document_page_fields, name='document-page-fields'),
+    path('<int:document_pk>/<int:pk>/regen-image/', views.PageRegenerateImageView.as_view(), name='document-page-regen-image'),
 ]

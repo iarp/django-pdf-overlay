@@ -10,17 +10,17 @@ def create_page_images_new_pdf(instance: Document, created, **kwargs):
 post_save.connect(create_page_images_new_pdf, sender=Document)
 
 
-def clean_up_pdf(instance: Document, **kwargs):
+def clean_up_document_on_delete(instance: Document, **kwargs):
     try:
         instance.file.delete(save=False)
     except:
         pass
-post_delete.connect(clean_up_pdf, sender=Document)
+post_delete.connect(clean_up_document_on_delete, sender=Document)
 
 
-def clean_up_layout_images(instance: Page, **kwargs):
+def clean_up_layout_images_on_delete(instance: Page, **kwargs):
     try:
         instance.image.delete(save=False)
     except:
         pass
-post_delete.connect(clean_up_layout_images, sender=Page)
+post_delete.connect(clean_up_layout_images_on_delete, sender=Page)

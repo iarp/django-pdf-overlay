@@ -18,6 +18,18 @@
 
     <p>Drag and drop the fields as needed, text position is based off of bottom left corner of the field itself.</p>
 
+    <p>Image missing or look bad? <a href="{{ object.get_image_regen_url }}">Try to regenerate the image.</a></p>
+
+    <p>You can use this dropdown to change the relative size of the layout to better place fields:
+        <select id="offset_selected">
+            <option selected="selected">1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+        </select>
+    </p>
+
     <canvas id="texts" width="{{ object.width }}" height="{{ object.height }}"></canvas>
 
     <form method="post" id="field-positions">{% csrf_token %}
@@ -32,45 +44,45 @@
     <script type="text/javascript">
 
         // If we expand the image, need to keep the output values relative to 8.5x11 sheet
-        var size_offset = 2;
+        var size_offset = 1;
 
         var canvas = document.getElementById("texts");
 
         canvas.width = canvas.width * size_offset;
         canvas.height = canvas.height * size_offset;
 
-        //canvas.width = 612 * size_offset;
-        //canvas.height = 792 * size_offset;
+        function change_offset(new_offset) {
+            canvas.width = Math.round(canvas.width / size_offset) * new_offset;
+            canvas.height = Math.round(canvas.height / size_offset) * new_offset;
+            for (var i = 0; i < texts.length; i++) {
+                var text = texts[i];
+                text.x = Math.round(text.x / size_offset) * new_offset;
+                text.y = Math.round(text.y / size_offset) * new_offset;
+                text.font_size = Math.round(text.font_size / size_offset) * new_offset;
+                text.width = ctx.measureText(text.text).width * new_offset;
+                text.height = Math.round(text.font_size / size_offset) * new_offset;
+            }
+
+            draw();
+
+            size_offset = new_offset;
+        }
+
         var ctx = canvas.getContext("2d");
 
         var $canvas = $("#texts");
-        var canvasOffset = $canvas.offset();
-        var offsetX = canvasOffset.left;
-        var offsetY = canvasOffset.top;
-        var scrollX = $canvas.scrollLeft();
-        var scrollY = $canvas.scrollTop();
-
-        // variables to save last mouse position
-        // used to see how far the user dragged the mouse
-        // and then move the text by that distance
-        var startX;
-        var startY;
 
         // some text objects
         var texts = [];
 
-        // some test texts
-        // texts.push({text: "Hello", x: 20, y: 20});
-        // texts.push({text: "World", x: 20, y: 70});
         {% for field in object.fields.all %}
             texts.push({
                 pk: {{ field.pk }},
-                text: "{{ field.name }}",
+                text: "{{ "{" }}{{ field.name }}{{ "}" }}",
                 name: "{{ field.name }}",
-                default: "{{ field.default }}",
-                x: {{ field.x }} * size_offset,
-                y: {{ field.y }} * size_offset,
-                font_size: {{field.font_size}} * size_offset,
+                x: {{ field.x }},
+                y: {{ field.y }},
+                font_size: {{field.font_size}},
                 font_font: "{{ field.font }}",
                 font_color: "{{ field.font_color }}",
             });
@@ -79,22 +91,23 @@
         for (var i = 0; i < texts.length; i++) {
             var text = texts[i];
             ctx.font = text.font_size + "px " + text.font_font;
-            text.width = ctx.measureText(text.text).width;
-            text.height = text.font_size;
 
-            $('<input>').attr({type: 'hidden', id: text.name + '_x', name: text.pk + '_x', value: Math.round(text.x / size_offset)}).appendTo('#field-positions');
-            $('<input>').attr({type: 'hidden', id: text.name + '_y', name: text.pk + '_y', value: Math.round(text.y / size_offset)}).appendTo('#field-positions');
-            $('<input>').attr({type: 'hidden', id: text.name + '_default', name: text.pk + '_default', value: text.default}).appendTo('#field-positions');
-            $('<input>').attr({type: 'hidden', id: text.name + '_font_size', name: text.pk + '_font_size', value: Math.round(text.font_size / size_offset)}).appendTo('#field-positions');
-            $('<input>').attr({type: 'hidden', id: text.name + '_font', name: text.pk + '_font', value: text.font_font}).appendTo('#field-positions');
-            $('<input>').attr({type: 'hidden', id: text.name + '_font_color', name: text.pk + '_font_color', value: text.font_color}).appendTo('#field-positions');
+            $('<input>').attr({type: 'hidden', id: text.pk + '_x', name: text.pk + '_x', value: text.x}).appendTo('#field-positions');
+            $('<input>').attr({type: 'hidden', id: text.pk + '_y', name: text.pk + '_y', value: text.y}).appendTo('#field-positions');
+            $('<input>').attr({type: 'hidden', id: text.pk + '_font_size', name: text.pk + '_font_size', value: text.font_size}).appendTo('#field-positions');
+            $('<input>').attr({type: 'hidden', id: text.pk + '_font', name: text.pk + '_font', value: text.font_font}).appendTo('#field-positions');
+            $('<input>').attr({type: 'hidden', id: text.pk + '_font_color', name: text.pk + '_font_color', value: text.font_color}).appendTo('#field-positions');
         }
 
         // this var will hold the index of the selected text
         var selectedText = -1;
 
         // START: draw all texts to the canvas
-        draw();
+        change_offset(1);
+
+        $('#offset_selected').on('change', function() {
+            change_offset(parseInt(this.value));
+        });
 
         // clear the canvas draw all texts
         function draw() {
@@ -160,8 +173,8 @@
             var text = texts[selectedText];
             text.x = mpos.x;
             text.y = mpos.y;
-            document.getElementById(text.text + '_x').value = Math.round(text.x / size_offset);
-            document.getElementById(text.text + '_y').value = Math.round(text.y / size_offset);
+            document.getElementById(text.pk + '_x').value = Math.round(text.x / size_offset);
+            document.getElementById(text.pk + '_y').value = Math.round(text.y / size_offset);
             draw();
         }
 

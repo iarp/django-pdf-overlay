@@ -2,12 +2,25 @@
 
 {% block content %}
 
-    <div class="list-group">
+    <table class="table">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Page Count</th>
+        <th>Created</th>
+        <th>Delete</th>
+    </tr>
+    </thead>
+    <tbody>
         {% for document in object_list %}
-            <div class="list-group-item">
-                <a href="{{ document.get_absolute_url }}">{{ document.name }} - {{ document.pages.count }} pages</a>
-            </div>
+            <tr>
+                <td><a href="{{ document.get_absolute_url }}">{{ document.name }}</a></td>
+                <td>{{ document.pages.count }}</td>
+                <td>{{ document.inserted }}</td>
+                <td><a href="{% url 'forms:document-delete' pk=document.pk %}" class="btn btn-danger">Delete</a></td>
+            </tr>
         {% endfor %}
-    </div>
+    </tbody>
+    </table>
 
 {% endblock %}

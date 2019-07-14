@@ -5,10 +5,17 @@
     <h1>Confirm Deletion of {{ object.name }}</h1>
 
     <form method="post" enctype="multipart/form-data">{% csrf_token %}
-        {{ form.as_p }}
+
+        <p>This will delete the PDF located in: <strong>{{ object.file.path }}</strong></p>
+        {% with object.pages.count as tpc %}
+            <p><strong>{{ tpc }} page thumbnail{{ tpc|pluralize:",s" }}</strong> and
+                <strong>{{ object.total_fields_counter }} field{{ object.total_fields_counter|pluralize:",s" }}</strong>
+                across all pages will also be permanently deleted.</p>
+        {% endwith %}
+
         <div class="form-actions">
             <input type="submit" name="submit" value="Delete" class="btn btn-danger">
-            <a href="{{ object.get_absolute_url }}" class="btn btn-primary">Cancel</a>
+            <a href="{% url 'forms:document-index' %}" class="btn btn-primary">Cancel</a>
         </div>
     </form>
 

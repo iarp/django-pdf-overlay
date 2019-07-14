@@ -11,6 +11,9 @@ from .forms import DocumentForm, FieldEditorForm
 class DocumentListView(ListView):
     model = Document
 
+    def get_queryset(self):
+        return super().get_queryset().order_by('-inserted')
+
 
 class DocumentCreateView(CreateView):
     model = Document
@@ -29,8 +32,10 @@ class DocumentDeleteView(DeleteView):
 class DocumentPageDetailView(DetailView):
     model = Page
 
+    template_name = 'forms/field_layout.html'
+
     def post(self, request, **kwargs):
-        changeable_fields = ['x', 'y', 'default', 'font_size', 'font_color', 'font']
+        changeable_fields = ['x', 'y', 'font_size', 'font_color', 'font']
         page = self.get_object()
 
         for field in page.fields.all():
@@ -39,7 +44,7 @@ class DocumentPageDetailView(DetailView):
             changed = False
 
             for f in changeable_fields:
-                x = f'{field.pk}_{f}'
+                x = '{}_{}'.format(field.pk, f)
 
                 if x in request.POST:
 
@@ -84,3 +89,12 @@ def document_page_fields(request, document_pk, pk):
         'page': page,
         'formset': formset
     })
+
+
+class PageRegenerateImageView(DetailView):
+    model = Page
+
+    def get(self, request, *args, **kwargs):
+        page = self.get_object()  # type: Page
+        page.convert_to_image()
+        return redirect(page)
