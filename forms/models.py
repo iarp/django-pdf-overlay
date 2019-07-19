@@ -2,7 +2,6 @@ import datetime
 from PyPDF2 import PdfFileWriter, PdfFileReader
 import io
 import os
-import math
 import tempfile
 import subprocess
 import copy
@@ -15,42 +14,19 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils.functional import cached_property
 
-from . import validators
+from . import validators, utils
 
-ordinal = lambda n: "%d%s" % (n, "tsnrhtdd"[(math.floor(n / 10) % 10 != 1) * (n % 10 < 4) * n % 10::4])
-
-BASE_PDF_LOCAL_STORAGE_LOCATION = os.path.join(settings.BASE_DIR, 'media', 'forms', 'documents')
-fs = FileSystemStorage(location=BASE_PDF_LOCAL_STORAGE_LOCATION)
-
-
-def get_field_data(attribute_name, object_name=None, default=None, **kwargs):
-
-    if object_name:
-        if object_name in kwargs:
-            tmp = kwargs[object_name]
-            if hasattr(tmp, attribute_name):
-                return getattr(tmp, attribute_name, default)
-            elif isinstance(tmp, dict):
-                return tmp[attribute_name]
-            return tmp
-        return default
-
-    if not kwargs:
-        return default
-
-    for tmp in kwargs.values():
-        if hasattr(tmp, attribute_name):
-            return getattr(tmp, attribute_name, default)
-        elif isinstance(tmp, dict) and attribute_name in tmp:
-            return tmp[attribute_name]
-
-    return default
+BASE_PDF_LOCAL_STORAGE_LOCATION = getattr(
+    settings, 'DJANGO_PDF_LOCAL_DOCUMENT_STORAGE',
+    os.path.join(settings.BASE_DIR, 'media', 'forms', 'documents')
+)
+local_document_storage = FileSystemStorage(location=BASE_PDF_LOCAL_STORAGE_LOCATION)
 
 
 class Document(models.Model):
 
     name = models.CharField(max_length=255, unique=True)
-    file = models.FileField(storage=fs, validators=[validators.validate_pdf])
+    file = models.FileField(storage=local_document_storage, validators=[validators.validate_pdf])
 
     inserted = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -97,30 +73,34 @@ class Document(models.Model):
         for page in self.pages.all():
             fields = {}
             for field in page.fields.all():
-                data = field.get_default()
+                data = None
 
                 if field.obj_name:
                     composed_data = []
                     for possible_field in field.obj_name.split(','):
                         if '.' in possible_field:
                             obj, attr_name = possible_field.split('.', 1)
-                            data = get_field_data(object_name=obj, attribute_name=attr_name, default=data, **kwargs)
+                            data = utils.get_field_data(object_name=obj, attribute_name=attr_name, **kwargs)
                             if data:
                                 composed_data.append(data)
                         else:
-                            data = get_field_data(attribute_name=possible_field, default=data, **kwargs)
+                            data = utils.get_field_data(attribute_name=possible_field, **kwargs)
                             if data:
                                 composed_data.append(data)
 
-                    data = ' '.join(composed_data)
+                    if composed_data:
+                        data = ' '.join(composed_data)
 
                 else:
 
                     try:
                         obj, attr_name = field.name.split('.', 1)
-                        data = get_field_data(object_name=obj, attribute_name=attr_name, default=data, **kwargs)
+                        data = utils.get_field_data(object_name=obj, attribute_name=attr_name, **kwargs)
                     except ValueError:
-                        data = get_field_data(attribute_name=field.name, default=data, **kwargs)
+                        data = utils.get_field_data(attribute_name=field.name, **kwargs)
+
+                if data is None:
+                    data = field.get_default()
 
                 fields[field] = data
 
@@ -276,18 +256,9 @@ class Field(models.Model):
     def __str__(self):
         return '{}.{}'.format(self.page, self.name)
 
-    def get_default(self):
+    def get_default(self, default=''):
+
         if not self.default:
-            return ''
+            return default
 
-        now = datetime.datetime.now()
-
-        if self.default == 'month_long':
-            return now.strftime("%B")
-        if self.default == 'year_short':
-            return str(now.year)[2:]
-        if self.default == 'day':
-            return ordinal(now.day)
-
-        return self.default
-
+        return utils.convert_datetime_objects(self.default)
