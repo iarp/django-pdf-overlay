@@ -128,9 +128,7 @@ class Document(models.Model):
             output.addPage(template_page)
 
         temp_file = tempfile.TemporaryFile()
-
         output.write(temp_file)
-
         temp_file.seek(0)
 
         if filename:
@@ -160,7 +158,7 @@ class Document(models.Model):
     def get_absolute_url(self):
         return reverse('forms:document-details', args=[self.pk])
 
-    @cached_property
+    @property
     def total_fields_counter(self):
         c = 0
         for p in self.pages.all():
