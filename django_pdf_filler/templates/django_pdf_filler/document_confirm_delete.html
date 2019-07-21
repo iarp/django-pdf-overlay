@@ -4,7 +4,7 @@
 
     <h1>Confirm Deletion of {{ object.name }}</h1>
 
-    <form method="post" enctype="multipart/form-data">{% csrf_token %}
+    <form method="post" action="{% url 'django-pdf-filler:document-delete' object.pk %}">{% csrf_token %}
 
         <p>This will delete the PDF located in: <strong>{{ object.file.path }}</strong></p>
         {% with object.pages.count as tpc %}

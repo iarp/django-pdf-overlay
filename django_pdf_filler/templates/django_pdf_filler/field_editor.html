@@ -7,7 +7,7 @@
         <small class="text-muted">Page #{{ page.number }} Field Editor</small>
         <a href="{{ page.get_absolute_url }}" class="btn btn-success">Field Layout</a></h1>
 
-    <form class="form-horizontal" method="post">{% csrf_token %}
+    <form class="form-horizontal" method="post" action="{{ page.get_fields_editor_url }}">{% csrf_token %}
         {{ formset.management_form }}
         {% for form in formset %}
             {% if form.instance.pk is None %}
@@ -21,7 +21,7 @@
                 </div>
             {% endif %}
             <div class="form-group">
-                {% bootstrap_form form layout='horizontal' required_css_class='required' %}
+                {% bootstrap_form form layout='horizontal' %}
             <hr />
             </div>
         {% endfor %}

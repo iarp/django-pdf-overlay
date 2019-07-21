@@ -188,6 +188,9 @@ class Page(models.Model):
     def get_fields_editor_url(self):
         return reverse('django-pdf-filler:document-page-fields', args=[self.document.pk, self.pk])
 
+    def get_fields_layout_url(self):
+        return self.get_absolute_url()
+
     def get_image_regen_url(self):
         return reverse('django-pdf-filler:document-page-regen-image', args=[self.document.pk, self.pk])
 
