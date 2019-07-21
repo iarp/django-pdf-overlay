@@ -15,18 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include, re_path
-
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('forms/', include('django_pdf_filler.urls', namespace='django-pdf-filler'))
-]
-
 from django.conf import settings
 from django.views.static import serve
 
-if settings.DEBUG:
-    urlpatterns += [
-        re_path(r'^media/(?P<path>.*)$', serve, {
-            'document_root': settings.MEDIA_ROOT,
-        }),
-    ]
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('django-pdf-filler/', include('django_pdf_filler.urls', namespace='django-pdf-filler')),
+    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT,}),
+]
