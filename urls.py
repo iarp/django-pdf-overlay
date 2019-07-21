@@ -18,7 +18,7 @@ from django.urls import path, include, re_path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('forms/', include('forms.urls', namespace='forms'))
+    path('forms/', include('django_pdf_filler.urls', namespace='django-pdf-filler'))
 ]
 
 from django.conf import settings

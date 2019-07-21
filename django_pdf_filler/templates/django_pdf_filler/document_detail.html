@@ -1,8 +1,8 @@
-{% extends 'forms/base.html' %}
+{% extends 'django_pdf_filler/base.html' %}
 
 {% block content %}
     <div style="float: right;">
-        <a href="{% url 'forms:document-delete' pk=object.pk %}" class="btn btn-danger">Delete</a>
+        <a href="{% url 'django-pdf-filler:document-delete' pk=object.pk %}" class="btn btn-danger">Delete</a>
     </div>
     <h1>{{ object.name }}</h1>
     <table class="table">

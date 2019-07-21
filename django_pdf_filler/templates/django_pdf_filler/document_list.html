@@ -1,4 +1,4 @@
-{% extends 'forms/base.html' %}
+{% extends 'django_pdf_filler/base.html' %}
 
 {% block content %}
 
@@ -17,7 +17,7 @@
                 <td><a href="{{ document.get_absolute_url }}">{{ document.name }}</a></td>
                 <td>{{ document.pages.count }}</td>
                 <td>{{ document.inserted }}</td>
-                <td><a href="{% url 'forms:document-delete' pk=document.pk %}" class="btn btn-danger">Delete</a></td>
+                <td><a href="{% url 'django-pdf-filler:document-delete' pk=document.pk %}" class="btn btn-danger">Delete</a></td>
             </tr>
         {% endfor %}
     </tbody>

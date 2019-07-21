@@ -6,8 +6,8 @@ from django.test import TestCase
 from django.conf import settings
 
 
-from forms.models import Document, Page, Field
-from forms.signals import post_save, create_page_images_new_pdf
+from django_pdf_filler.models import Document, Page, Field
+from django_pdf_filler.signals import post_save, create_page_images_new_pdf
 
 
 def setup_test_document_no_signal():
@@ -31,7 +31,7 @@ class ModelTests(TestCase):
         super().tearDown()
 
     def setup_test_document(self):
-        path_to_file = os.path.join(settings.BASE_DIR, 'forms', 'tests', 'fixtures',
+        path_to_file = os.path.join(settings.BASE_DIR, 'django_pdf_filler', 'tests', 'fixtures',
                                     'OHFRowansLawAcknowledgementForm.pdf')
         document = Document(name='Tests Document')
         document.file.save('OHFRowansLawAcknowledgementForm.pdf', open(path_to_file, 'rb'))

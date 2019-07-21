@@ -18,7 +18,7 @@ from . import validators, utils
 
 BASE_PDF_LOCAL_STORAGE_LOCATION = getattr(
     settings, 'DJANGO_PDF_LOCAL_DOCUMENT_STORAGE',
-    os.path.join(settings.BASE_DIR, 'media', 'forms', 'documents')
+    os.path.join(settings.BASE_DIR, 'media', 'django_pdf_filler', 'documents')
 )
 local_document_storage = FileSystemStorage(location=BASE_PDF_LOCAL_STORAGE_LOCATION)
 
@@ -156,7 +156,7 @@ class Document(models.Model):
             page.convert_to_image()
 
     def get_absolute_url(self):
-        return reverse('forms:document-details', args=[self.pk])
+        return reverse('django-pdf-filler:document-details', args=[self.pk])
 
     @property
     def total_fields_counter(self):
@@ -174,7 +174,7 @@ class Page(models.Model):
 
     document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='pages')
     number = models.PositiveIntegerField(default=0)
-    image = models.FileField(upload_to='forms/layouts/', blank=True, null=True)
+    image = models.FileField(upload_to='django_pdf_filler/layouts/', blank=True, null=True)
 
     width = models.PositiveIntegerField(default=612)
     height = models.PositiveIntegerField(default=792)
@@ -183,13 +183,13 @@ class Page(models.Model):
         return '{} Page #{}'.format(self.document, self.number)
 
     def get_absolute_url(self):
-        return reverse('forms:document-page-layout', args=[self.document.pk, self.pk])
+        return reverse('django-pdf-filler:document-page-layout', args=[self.document.pk, self.pk])
 
     def get_fields_editor_url(self):
-        return reverse('forms:document-page-fields', args=[self.document.pk, self.pk])
+        return reverse('django-pdf-filler:document-page-fields', args=[self.document.pk, self.pk])
 
     def get_image_regen_url(self):
-        return reverse('forms:document-page-regen-image', args=[self.document.pk, self.pk])
+        return reverse('django-pdf-filler:document-page-regen-image', args=[self.document.pk, self.pk])
 
     def get_layout_image(self):
         try:

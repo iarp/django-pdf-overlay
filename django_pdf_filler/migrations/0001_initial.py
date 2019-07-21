@@ -3,7 +3,7 @@
 import django.core.files.storage
 from django.db import migrations, models
 import django.db.models.deletion
-import forms.validators
+import django_pdf_filler.validators
 
 
 class Migration(migrations.Migration):
@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=255, unique=True)),
-                ('file', models.FileField(storage=django.core.files.storage.FileSystemStorage(location='F:\\Projects\\django_pdf\\media\\forms\\documents'), upload_to='', validators=[forms.validators.validate_pdf])),
+                ('file', models.FileField(storage=django.core.files.storage.FileSystemStorage(location='F:\\Projects\\django_pdf\\media\\forms\\documents'), upload_to='', validators=[django_pdf_filler.validators.validate_pdf])),
                 ('inserted', models.DateTimeField(auto_now_add=True)),
                 ('updated', models.DateTimeField(auto_now=True)),
             ],
@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
                 ('image', models.FileField(blank=True, null=True, upload_to='forms/layouts/')),
                 ('width', models.PositiveIntegerField(default=612)),
                 ('height', models.PositiveIntegerField(default=792)),
-                ('document', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='pages', to='forms.Document')),
+                ('document', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='pages', to='django_pdf_filler.Document')),
             ],
             options={
                 'ordering': ['number'],
@@ -54,7 +54,7 @@ class Migration(migrations.Migration):
                 ('font', models.CharField(default='Helvetica', max_length=50)),
                 ('inserted', models.DateTimeField(auto_now_add=True)),
                 ('updated', models.DateTimeField(auto_now=True)),
-                ('page', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='fields', to='forms.Page')),
+                ('page', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='fields', to='django_pdf_filler.Page')),
             ],
             options={
                 'unique_together': {('page', 'name')},

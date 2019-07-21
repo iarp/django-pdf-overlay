@@ -26,13 +26,13 @@ class DocumentDetailView(DetailView):
 
 class DocumentDeleteView(DeleteView):
     model = Document
-    success_url = reverse_lazy('forms:document-index')
+    success_url = reverse_lazy('django-pdf-filler:document-index')
 
 
 class DocumentPageDetailView(DetailView):
     model = Page
 
-    template_name = 'forms/field_layout.html'
+    template_name = 'django_pdf_filler/field_layout.html'
 
     def post(self, request, **kwargs):
         changeable_fields = ['x', 'y', 'font_size', 'font_color', 'font']
@@ -84,7 +84,7 @@ def document_page_fields(request, document_pk, pk):
 
         return redirect(page.get_fields_editor_url())
 
-    return render(request, 'forms/field_editor.html', {
+    return render(request, 'django_pdf_filler/field_editor.html', {
         'document': document,
         'page': page,
         'formset': formset

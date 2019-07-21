@@ -2,7 +2,7 @@ from django.urls import path
 
 from . import views
 
-app_name = 'forms'
+app_name = 'django_pdf_filler'
 
 urlpatterns = [
     path('', views.DocumentListView.as_view(), name='document-index'),

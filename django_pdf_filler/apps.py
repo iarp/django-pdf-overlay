@@ -1,8 +1,8 @@
 from django.apps import AppConfig
 
 
-class FormsConfig(AppConfig):
-    name = 'forms'
+class DjangoPDFFillerConfig(AppConfig):
+    name = 'django_pdf_filler'
 
     def ready(self):
         from . import signals

@@ -3,7 +3,7 @@ import datetime
 from django.test import TestCase
 
 
-from forms import utils
+from django_pdf_filler import utils
 
 
 class UtilsTests(TestCase):
