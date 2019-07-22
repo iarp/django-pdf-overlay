@@ -45,20 +45,25 @@ class ModelTests(TestCase):
         self.assertEqual([], doc._rendered_pages)
         doc.render_pages()
         self.assertEqual(2, len(doc._rendered_pages))
+        self.assertEqual(0, doc.times_used)
 
         file = doc.render_as_document()
+        self.assertEqual(1, doc.times_used)
         template_pdf = PdfFileReader(file)
         self.assertEqual(2, template_pdf.getNumPages())
 
         file = doc.render_as_document(pages=[0])
+        self.assertEqual(2, doc.times_used)
         template_pdf = PdfFileReader(file)
         self.assertEqual(1, template_pdf.getNumPages())
 
         file = doc.render_as_document(pages=[0, 1])
+        self.assertEqual(3, doc.times_used)
         template_pdf = PdfFileReader(file)
         self.assertEqual(2, template_pdf.getNumPages())
 
         file = doc.render_as_document(pages=[])
+        self.assertEqual(4, doc.times_used)
         template_pdf = PdfFileReader(file)
         self.assertEqual(0, template_pdf.getNumPages())
 

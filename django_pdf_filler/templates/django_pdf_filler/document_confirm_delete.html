@@ -6,12 +6,14 @@
 
     <form method="post" action="{% url 'django-pdf-filler:document-delete' object.pk %}">{% csrf_token %}
 
-        <p>This will delete the PDF located in: <strong>{{ object.file.path }}</strong></p>
-        {% with object.pages.count as tpc %}
-            <p><strong>{{ tpc }} page thumbnail{{ tpc|pluralize:",s" }}</strong> and
-                <strong>{{ object.total_fields_counter }} field{{ object.total_fields_counter|pluralize:",s" }}</strong>
-                across all pages will also be permanently deleted.</p>
-        {% endwith %}
+        {% if object.file %}
+            <p>This will delete the PDF located in: <strong>{{ object.file.path }}</strong></p>
+            {% with object.pages.count as tpc %}
+                <p><strong>{{ tpc }} page thumbnail{{ tpc|pluralize:",s" }}</strong> and
+                    <strong>{{ object.total_fields_counter }} field{{ object.total_fields_counter|pluralize:",s" }}</strong>
+                    across all pages will also be permanently deleted.</p>
+            {% endwith %}
+        {% endif %}
 
         <div class="form-actions">
             <input type="submit" name="submit" value="Delete" class="btn btn-danger">

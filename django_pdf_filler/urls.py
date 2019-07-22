@@ -9,7 +9,9 @@ urlpatterns = [
     path('create/', views.DocumentCreateView.as_view(), name='document-create'),
     path('<int:pk>/', views.DocumentDetailView.as_view(), name='document-details'),
     path('<int:pk>/delete/', views.DocumentDeleteView.as_view(), name='document-delete'),
-    path('<int:document_pk>/<int:pk>/layout/', views.DocumentPageDetailView.as_view(), name='document-page-layout'),
-    path('<int:document_pk>/<int:pk>/fields/', views.document_page_fields, name='document-page-fields'),
-    path('<int:document_pk>/<int:pk>/regen-image/', views.PageRegenerateImageView.as_view(), name='document-page-regen-image'),
+    path('<int:pk>/edit/', views.DocumentUpdateView.as_view(), name='document-edit'),
+    path('page/<int:pk>/layout/', views.PageDetailView.as_view(), name='page-layout'),
+    path('page/<int:pk>/fields/', views.page_fields, name='page-fields'),
+    path('page/<int:pk>/fields/copy/', views.PageCopyFieldsView.as_view(), name='page-fields-copy'),
+    path('page/<int:pk>/regen-image/', views.PageRegenerateImageView.as_view(), name='page-regen-image'),
 ]

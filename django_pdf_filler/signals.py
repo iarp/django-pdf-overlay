@@ -4,12 +4,6 @@ from django.db.models.signals import post_save, post_delete
 from .models import Document, Page
 
 
-def create_page_images_new_pdf(instance, created, **kwargs):
-    if created:
-        instance.generate_page_layout_images()
-post_save.connect(create_page_images_new_pdf, sender=Document)
-
-
 def clean_up_document_on_delete(instance, **kwargs):
     try:
         instance.file.delete(save=False)

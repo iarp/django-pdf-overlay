@@ -1,12 +1,36 @@
 from django import forms
 
-from .models import Document, Field
+from .models import Document, Page, Field
 
 
-class DocumentForm(forms.ModelForm):
+class RegenPageLayouts(forms.ModelForm):
+
+    def save(self, commit=True):
+        obj = super().save(commit=commit)
+        obj.generate_page_layout_images()
+        return obj
+
+
+class DocumentCreateForm(RegenPageLayouts):
     class Meta:
         model = Document
-        fields = '__all__'
+        fields = ['name', 'file']
+
+    name = forms.CharField(required=False)
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        if not cleaned_data.get('name') and cleaned_data.get('file'):
+            cleaned_data['name'] = cleaned_data['file'].name.replace('.pdf', '')
+
+        return cleaned_data
+
+
+class DocumentUpdateForm(RegenPageLayouts):
+    class Meta:
+        model = Document
+        fields = ['file']
 
 
 class FieldEditorForm(forms.ModelForm):
@@ -25,3 +49,18 @@ class FieldEditorForm(forms.ModelForm):
             'font': 'The font must be installed on the server if you plan on using a non-standard font',
             'name': 'Must be unique to this page.'
         }
+
+
+class FieldsCopyFromDocumentPageForm(forms.Form):
+    page = forms.ModelChoiceField(Page.objects.all())
+
+    exclude_matching_fields = forms.BooleanField(
+        initial=True,
+        help_text='Do not import fields from selected Page where field name exists in the current page.',
+        required=False
+    )
+
+    def __init__(self, *args, current_page_id=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if current_page_id:
+            self.fields['page'].queryset = Page.objects.all().exclude(pk=current_page_id)

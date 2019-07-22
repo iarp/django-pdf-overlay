@@ -2,10 +2,14 @@
 
 {% block content %}
 
-    <form method="post" enctype="multipart/form-data" action="{% url 'django-pdf-filler:document-create' %}">{% csrf_token %}
+    <form method="post" enctype="multipart/form-data">{% csrf_token %}
         {{ form.as_p }}
         <div class="form-actions">
-            <input type="submit" name="submit" value="Upload New Document" class="btn btn-primary">
+            {% if object.pk %}
+                <input type="submit" name="submit" value="Replace Document" class="btn btn-primary">
+            {% else %}
+                <input type="submit" name="submit" value="Upload New Document" class="btn btn-primary">
+            {% endif %}
         </div>
     </form>
 

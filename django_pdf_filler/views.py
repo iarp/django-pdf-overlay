@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 
-from django.views.generic import ListView, DetailView, CreateView, DeleteView
+from django.views.generic import View, ListView, DetailView, CreateView, DeleteView, UpdateView
 from django.forms import inlineformset_factory
+from django.contrib import messages
+from django.db.utils import IntegrityError
 
 from .models import Document, Page, Field
-from .forms import DocumentForm, FieldEditorForm
+from .forms import DocumentCreateForm, DocumentUpdateForm, FieldEditorForm, FieldsCopyFromDocumentPageForm
 
 
 class DocumentListView(ListView):
@@ -17,11 +19,16 @@ class DocumentListView(ListView):
 
 class DocumentCreateView(CreateView):
     model = Document
-    form_class = DocumentForm
+    form_class = DocumentCreateForm
 
 
 class DocumentDetailView(DetailView):
     model = Document
+
+
+class DocumentUpdateView(UpdateView):
+    model = Document
+    form_class = DocumentUpdateForm
 
 
 class DocumentDeleteView(DeleteView):
@@ -29,7 +36,7 @@ class DocumentDeleteView(DeleteView):
     success_url = reverse_lazy('django-pdf-filler:document-index')
 
 
-class DocumentPageDetailView(DetailView):
+class PageDetailView(DetailView):
     model = Page
 
     template_name = 'django_pdf_filler/field_layout.html'
@@ -66,15 +73,45 @@ class DocumentPageDetailView(DetailView):
         return redirect(self.get_object().get_absolute_url())
 
 
-def document_page_fields(request, document_pk, pk):
-    document = get_object_or_404(Document, pk=document_pk)
-    page = get_object_or_404(document.pages.all(), pk=pk)
+class PageCopyFieldsView(DetailView):
+    model = Page
+    http_method_names = ['post']
+
+    def post(self, request, pk):
+
+        object = self.get_object()  # type: Page
+
+        field_copy_form = FieldsCopyFromDocumentPageForm(data=request.POST)
+        if field_copy_form.is_valid():
+            selected_page = field_copy_form.cleaned_data['page']
+
+            for field in selected_page.fields.all():
+
+                if field_copy_form.cleaned_data['exclude_matching_fields']:
+
+                    # Ensure field we're about to copy does not already exist on the current page
+                    if object.fields.filter(name=field.name).exists():
+                        messages.info(request, '{} already exists'.format(field.name))
+                        continue
+
+                field.pk = None
+                field.page = object
+                field.save()
+                messages.success(request, '{} successfully copied from "{}"'.format(field.name, selected_page))
+
+        return redirect(object.get_fields_editor_url())
+
+
+def page_fields(request, pk):
+    page = get_object_or_404(Page, pk=pk)
+
+    field_copy_form = FieldsCopyFromDocumentPageForm(current_page_id=page.pk)
 
     document_fields_formset = inlineformset_factory(
         Page,
         Field,
         form=FieldEditorForm,
-        extra=2,
+        extra=1,
         can_delete=True,
     )
     formset = document_fields_formset(data=request.POST if request.method == 'POST' else None, instance=page)
@@ -85,9 +122,9 @@ def document_page_fields(request, document_pk, pk):
         return redirect(page.get_fields_editor_url())
 
     return render(request, 'django_pdf_filler/field_editor.html', {
-        'document': document,
-        'page': page,
-        'formset': formset
+        'object': page,
+        'formset': formset,
+        'field_copy_form': field_copy_form,
     })
 
 

@@ -20,6 +20,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=255, unique=True)),
                 ('file', models.FileField(storage=django.core.files.storage.FileSystemStorage(location='F:\\Projects\\django_pdf\\media\\forms\\documents'), upload_to='', validators=[django_pdf_filler.validators.validate_pdf])),
+                ('times_used', models.PositiveIntegerField(default=0)),
                 ('inserted', models.DateTimeField(auto_now_add=True)),
                 ('updated', models.DateTimeField(auto_now=True)),
             ],
@@ -29,7 +30,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('number', models.PositiveIntegerField(default=0)),
-                ('image', models.FileField(blank=True, null=True, upload_to='forms/layouts/')),
+                ('image', models.FileField(blank=True, null=True, upload_to='django_pdf_filler/layouts/')),
                 ('width', models.PositiveIntegerField(default=612)),
                 ('height', models.PositiveIntegerField(default=792)),
                 ('document', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='pages', to='django_pdf_filler.Document')),
@@ -56,8 +57,5 @@ class Migration(migrations.Migration):
                 ('updated', models.DateTimeField(auto_now=True)),
                 ('page', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='fields', to='django_pdf_filler.Page')),
             ],
-            options={
-                'unique_together': {('page', 'name')},
-            },
         ),
     ]

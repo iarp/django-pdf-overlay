@@ -16,17 +16,29 @@ from django.utils.functional import cached_property
 
 from . import validators, utils
 
+
+class OverwriteFileSystemStore(FileSystemStorage):
+
+    def get_available_name(self, name, max_length=None):
+        path = os.path.join(self.location, name)
+        if os.path.isfile(path):
+            os.remove(path)
+        return name
+
+
 BASE_PDF_LOCAL_STORAGE_LOCATION = getattr(
     settings, 'DJANGO_PDF_LOCAL_DOCUMENT_STORAGE',
     os.path.join(settings.BASE_DIR, 'media', 'django_pdf_filler', 'documents')
 )
-local_document_storage = FileSystemStorage(location=BASE_PDF_LOCAL_STORAGE_LOCATION)
+local_document_storage = OverwriteFileSystemStore(location=BASE_PDF_LOCAL_STORAGE_LOCATION)
 
 
 class Document(models.Model):
 
     name = models.CharField(max_length=255, unique=True)
     file = models.FileField(storage=local_document_storage, validators=[validators.validate_pdf])
+
+    times_used = models.PositiveIntegerField(default=0)
 
     inserted = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -131,6 +143,9 @@ class Document(models.Model):
         output.write(temp_file)
         temp_file.seek(0)
 
+        Document.objects.filter(pk=self.pk).update(times_used=models.F('times_used')+1)
+        self.times_used += 1
+
         if filename:
             with open(filename, 'wb') as fw:
                 fw.write(temp_file.read())
@@ -183,18 +198,18 @@ class Page(models.Model):
         return '{} Page #{}'.format(self.document, self.number)
 
     def get_absolute_url(self):
-        return reverse('django-pdf-filler:document-page-layout', args=[self.document.pk, self.pk])
+        return reverse('django-pdf-filler:page-layout', args=[self.pk])
 
     def get_fields_editor_url(self):
-        return reverse('django-pdf-filler:document-page-fields', args=[self.document.pk, self.pk])
+        return reverse('django-pdf-filler:page-fields', args=[self.pk])
 
     def get_fields_layout_url(self):
         return self.get_absolute_url()
 
     def get_image_regen_url(self):
-        return reverse('django-pdf-filler:document-page-regen-image', args=[self.document.pk, self.pk])
+        return reverse('django-pdf-filler:page-regen-image', args=[self.pk])
 
-    def get_layout_image(self):
+    def get_layout_image_url(self):
         try:
             return self.image.url
         except:
@@ -205,7 +220,7 @@ class Page(models.Model):
         filepath_raw, ext = self.document.file.path.rsplit('.', 1)
 
         if self.image:
-            self.image.delete()
+            self.image.delete(save=False)
 
         image_file = '{}_{}.jpg'.format(filepath_raw, self.number)
 
@@ -219,8 +234,8 @@ class Page(models.Model):
         process = subprocess.Popen(commands, stdout=subprocess.PIPE)
         process.wait()
 
-        tmp_image_name = self.document.file.name.rsplit('.', 1)
-        image_filename = '{}_{}.jpg'.format(tmp_image_name[0], self.number)
+        tmp_image_name, _ = self.document.file.name.rsplit('.', 1)
+        image_filename = '{}_{}.jpg'.format(tmp_image_name, self.number)
 
         if os.path.isfile(image_file):
             with open(image_file, 'rb') as fo:
@@ -233,9 +248,6 @@ class Page(models.Model):
 
 
 class Field(models.Model):
-
-    class Meta:
-        unique_together = ('page', 'name')
 
     page = models.ForeignKey(Page, on_delete=models.CASCADE, related_name='fields')
 

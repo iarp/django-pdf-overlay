@@ -3,11 +3,11 @@
 
 {% block content %}
 
-    <h1><a href="{{ document.get_absolute_url }}">{{ document.name }}</a>
-        <small class="text-muted">Page #{{ page.number }} Field Editor</small>
-        <a href="{{ page.get_absolute_url }}" class="btn btn-success">Field Layout</a></h1>
+    <h1><a href="{{ object.document.get_absolute_url }}">{{ object.document.name }}</a>
+        <small class="text-muted">Page #{{ object.number }} Field Editor</small>
+        <a href="{{ object.get_absolute_url }}" class="btn btn-success">Field Layout</a></h1>
 
-    <form class="form-horizontal" method="post" action="{{ page.get_fields_editor_url }}">{% csrf_token %}
+    <form class="form-horizontal" method="post" action="{{ object.get_fields_editor_url }}">{% csrf_token %}
         {{ formset.management_form }}
         {% for form in formset %}
             {% if form.instance.pk is None %}
@@ -17,7 +17,8 @@
                 </div>
             {% else %}
                 <div class="form-group">
-                    <h3>Field: {{ form.instance.name }}</h3>
+                    <h3>Field: {{ form.instance.name }}
+                    <small class="text-muted" style="float: right;">Created: {{ form.instance.inserted }}</small></h3>
                 </div>
             {% endif %}
             <div class="form-group">
@@ -28,6 +29,17 @@
 
         {% buttons %}
             <input type="submit" name="submit" value="Save" class="btn btn-primary">
+        {% endbuttons %}
+    </form>
+
+    <hr />
+
+    <h1>Copy Fields From Another Page</h1>
+
+    <form method="post" action="{% url 'django-pdf-filler:page-fields-copy' pk=object.pk %}">{% csrf_token %}
+        {% bootstrap_form field_copy_form layout='horizontal' %}
+        {% buttons %}
+            <input type="submit" name="copy_fields" value="Copy Fields" class="btn btn-primary">
         {% endbuttons %}
     </form>
 
