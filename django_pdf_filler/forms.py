@@ -6,7 +6,7 @@ from .models import Document, Page, Field
 class RegenPageLayouts(forms.ModelForm):
 
     def save(self, commit=True):
-        obj = super().save(commit=commit)
+        obj = super(RegenPageLayouts, self).save(commit=commit)
         obj.generate_page_layout_images()
         return obj
 
@@ -19,7 +19,7 @@ class DocumentCreateForm(RegenPageLayouts):
     name = forms.CharField(required=False)
 
     def clean(self):
-        cleaned_data = super().clean()
+        cleaned_data = super(DocumentCreateForm, self).clean()
 
         if not cleaned_data.get('name') and cleaned_data.get('file'):
             cleaned_data['name'] = cleaned_data['file'].name.replace('.pdf', '')
@@ -61,6 +61,6 @@ class FieldsCopyFromDocumentPageForm(forms.Form):
     )
 
     def __init__(self, *args, current_page_id=None, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(FieldsCopyFromDocumentPageForm, self).__init__(*args, **kwargs)
         if current_page_id:
             self.fields['page'].queryset = Page.objects.all().exclude(pk=current_page_id)

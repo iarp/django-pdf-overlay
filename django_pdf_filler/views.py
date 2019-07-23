@@ -14,7 +14,7 @@ class DocumentListView(ListView):
     model = Document
 
     def get_queryset(self):
-        return super().get_queryset().order_by('-inserted')
+        return super(DocumentListView, self).get_queryset().order_by('-inserted')
 
 
 class DocumentCreateView(CreateView):
