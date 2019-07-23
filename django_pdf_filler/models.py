@@ -47,7 +47,7 @@ class Document(models.Model):
         return self.name
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(Document, self).__init__(*args, **kwargs)
         self._rendered_pages = []
 
     @staticmethod
@@ -121,6 +121,9 @@ class Document(models.Model):
                 'page': self._render_page(fields)
             })
 
+        Document.objects.filter(pk=self.pk).update(times_used=models.F('times_used')+1)
+        self.times_used += 1
+
     def render_as_document(self, filename=None, pages=None):
 
         output = PdfFileWriter()
@@ -143,24 +146,27 @@ class Document(models.Model):
         output.write(temp_file)
         temp_file.seek(0)
 
-        Document.objects.filter(pk=self.pk).update(times_used=models.F('times_used')+1)
-        self.times_used += 1
-
         if filename:
             with open(filename, 'wb') as fw:
                 fw.write(temp_file.read())
         else:
             return temp_file
 
-    def render_as_response(self, filename, pages=None):
+    def render_as_response(self, filename=None, pages=None):
         file = self.render_as_document(pages=pages)
+
+        if not filename:
+            filename = self.file.name
+
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
         response.write(file.read())
         return response
 
-    def generate_page_layout_images(self):
+    def generate_page_layout_images(self, create_layout_images=True):
         template_pdf = PdfFileReader(self.file.file)
+
+        existing_pages = set()
 
         for x in range(template_pdf.getNumPages()):
             _, _, width, height = template_pdf.getPage(x).mediaBox
@@ -168,7 +174,13 @@ class Document(models.Model):
                 'width': width,
                 'height': height,
             })
-            page.convert_to_image()
+
+            if create_layout_images:
+                page.convert_to_image()
+
+            existing_pages.add(page.pk)
+
+        self.pages.all().exclude(pk__in=existing_pages).delete()
 
     def get_absolute_url(self):
         return reverse('django-pdf-filler:document-details', args=[self.pk])

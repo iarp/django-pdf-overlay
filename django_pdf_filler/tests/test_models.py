@@ -4,68 +4,120 @@ from PyPDF2 import PdfFileReader
 
 from django.test import TestCase
 from django.conf import settings
-
+from django.http import HttpResponse
 
 from django_pdf_filler.models import Document, Page, Field
-from django_pdf_filler.signals import post_save, create_page_images_new_pdf
-
-
-def setup_test_document_no_signal():
-    post_save.disconnect(create_page_images_new_pdf, sender=Document)
-    document = Document.objects.create(name='Tests Document')
-    post_save.connect(create_page_images_new_pdf, sender=Document)
-    Page.objects.create(document=document, number=0)
-    Page.objects.create(document=document, number=1)
-    return document
 
 
 class ModelTests(TestCase):
 
-    def setUp(self) -> None:
+    def setUp(self):
         self.created_documents = []
-        super().setUp()
+        super(ModelTests, self).setUp()
 
-    def tearDown(self) -> None:
+    def tearDown(self):
         for doc in self.created_documents:
             doc.delete()
-        super().tearDown()
+        super(ModelTests, self).tearDown()
 
     def setup_test_document(self):
         path_to_file = os.path.join(settings.BASE_DIR, 'django_pdf_filler', 'tests', 'fixtures',
                                     'OHFRowansLawAcknowledgementForm.pdf')
         document = Document(name='Tests Document')
         document.file.save('OHFRowansLawAcknowledgementForm.pdf', open(path_to_file, 'rb'))
+        document.generate_page_layout_images(create_layout_images=False)
         self.created_documents.append(document)
+
+        self.assertEqual(2, document.pages.count())
+        self.assertEqual(0, document.total_fields_counter)
+        self.assertEqual([], document._rendered_pages)
+
         return document
 
-    def test_real_document(self):
+    def test_document_single_render_limited_to_certain_pages(self):
         doc = self.setup_test_document()
-        self.assertEqual(2, doc.pages.count())
-        self.assertEqual(0, doc.total_fields_counter)
-        self.assertEqual([], doc._rendered_pages)
         doc.render_pages()
         self.assertEqual(2, len(doc._rendered_pages))
-        self.assertEqual(0, doc.times_used)
 
         file = doc.render_as_document()
-        self.assertEqual(1, doc.times_used)
         template_pdf = PdfFileReader(file)
         self.assertEqual(2, template_pdf.getNumPages())
 
         file = doc.render_as_document(pages=[0])
-        self.assertEqual(2, doc.times_used)
         template_pdf = PdfFileReader(file)
         self.assertEqual(1, template_pdf.getNumPages())
 
         file = doc.render_as_document(pages=[0, 1])
-        self.assertEqual(3, doc.times_used)
         template_pdf = PdfFileReader(file)
         self.assertEqual(2, template_pdf.getNumPages())
 
         file = doc.render_as_document(pages=[])
-        self.assertEqual(4, doc.times_used)
         template_pdf = PdfFileReader(file)
         self.assertEqual(0, template_pdf.getNumPages())
+
+    def test_document_multi_render_limited_to_certain_pages(self):
+        doc = self.setup_test_document()
+
+        doc.render_pages()
+        self.assertEqual(2, len(doc._rendered_pages))
+        doc.render_pages()
+        self.assertEqual(4, len(doc._rendered_pages))
+
+        file = doc.render_as_document()
+        template_pdf = PdfFileReader(file)
+        self.assertEqual(4, template_pdf.getNumPages())
+
+        file = doc.render_as_document(pages=[0])
+        template_pdf = PdfFileReader(file)
+        self.assertEqual(2, template_pdf.getNumPages())
+
+        file = doc.render_as_document(pages=[0, 1])
+        template_pdf = PdfFileReader(file)
+        self.assertEqual(4, template_pdf.getNumPages())
+
+        file = doc.render_as_document(pages=[])
+        template_pdf = PdfFileReader(file)
+        self.assertEqual(0, template_pdf.getNumPages())
+
+    def test_document_used_counter(self):
+        doc = self.setup_test_document()
+        self.assertEqual(0, doc.times_used)
+
+        doc.render_pages()
+        self.assertEqual(1, doc.times_used)
+
+        doc.render_as_document()
+        self.assertEqual(1, doc.times_used)
+
+        doc.render_as_response()
+        self.assertEqual(1, doc.times_used)
+
+        doc.render_pages()
+        self.assertEqual(2, doc.times_used)
+
+    def test_document_render_multipage(self):
+        doc = self.setup_test_document()
+
+        doc.render_pages()
+        self.assertEqual(2, len(doc._rendered_pages))
+
+        doc.render_as_document()
+        self.assertEqual(2, len(doc._rendered_pages))
+
+        doc.render_as_response()
+        self.assertEqual(2, len(doc._rendered_pages))
+
+        doc.render_pages()
+        self.assertEqual(4, len(doc._rendered_pages))
+
+    def test_document_render_as_response_is_valid(self):
+        doc = self.setup_test_document()
+
+        response = doc.render_as_response(filename='tests.pdf')
+
+        self.assertIs(type(response), HttpResponse)
+        self.assertEqual('attachment; filename="tests.pdf"', response['Content-Disposition'])
+        self.assertEqual('application/pdf', response['Content-Type'])
 
     def test_field_default_as_datetime(self):
         f = Field(default='dt:%Y-%m-%d')
@@ -76,8 +128,7 @@ class ModelTests(TestCase):
         self.assertEquals('', Field().get_default())
 
     def test_field_counter(self):
-        doc = setup_test_document_no_signal()
-        self.assertEqual(0, doc.total_fields_counter)
+        doc = self.setup_test_document()
 
         p1 = doc.pages.first()
         p2 = doc.pages.last()
