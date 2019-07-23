@@ -33,7 +33,7 @@ class DocumentUpdateView(UpdateView):
 
 class DocumentDeleteView(DeleteView):
     model = Document
-    success_url = reverse_lazy('django-pdf-filler:document-index')
+    success_url = reverse_lazy('django-pdf-filler:index')
 
 
 class PageDetailView(DetailView):

@@ -5,8 +5,8 @@ from . import views
 app_name = 'django_pdf_filler'
 
 urlpatterns = [
-    path('', views.DocumentListView.as_view(), name='document-index'),
-    path('create/', views.DocumentCreateView.as_view(), name='document-create'),
+    path('', views.DocumentListView.as_view(), name='index'),
+    path('create/', views.DocumentCreateView.as_view(), name='create'),
     path('<int:pk>/', views.DocumentDetailView.as_view(), name='document-details'),
     path('<int:pk>/delete/', views.DocumentDeleteView.as_view(), name='document-delete'),
     path('<int:pk>/edit/', views.DocumentUpdateView.as_view(), name='document-edit'),

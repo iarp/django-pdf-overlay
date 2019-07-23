@@ -10,6 +10,7 @@
             {% else %}
                 <input type="submit" name="submit" value="Upload New Document" class="btn btn-primary">
             {% endif %}
+            <a href="{% url 'django-pdf-filler:index' %}" class="btn btn-warning">Cancel</a>
         </div>
     </form>
 
