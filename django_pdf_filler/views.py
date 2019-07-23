@@ -3,39 +3,47 @@ from django.urls import reverse_lazy
 
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
 from django.contrib import messages
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.decorators import permission_required
 
 from .models import Document, Page, Field
 from .forms import DocumentCreateForm, DocumentUpdateForm, page_fields_formset, FieldsCopyFromDocumentPageForm
 
 
-class DocumentListView(ListView):
+class DocumentListView(PermissionRequiredMixin, ListView):
     model = Document
+    permission_required = 'django_pdf_filler.view_document'
 
     def get_queryset(self):
         return super(DocumentListView, self).get_queryset().order_by('-inserted')
 
 
-class DocumentCreateView(CreateView):
+class DocumentCreateView(PermissionRequiredMixin, CreateView):
     model = Document
     form_class = DocumentCreateForm
+    permission_required = 'django_pdf_filler.add_document'
 
 
-class DocumentDetailView(DetailView):
+class DocumentDetailView(PermissionRequiredMixin, DetailView):
     model = Document
+    permission_required = 'django_pdf_filler.view_document'
 
 
-class DocumentUpdateView(UpdateView):
+class DocumentUpdateView(PermissionRequiredMixin, UpdateView):
     model = Document
     form_class = DocumentUpdateForm
+    permission_required = 'django_pdf_filler.change_document'
 
 
-class DocumentDeleteView(DeleteView):
+class DocumentDeleteView(PermissionRequiredMixin, DeleteView):
     model = Document
     success_url = reverse_lazy('django-pdf-filler:index')
+    permission_required = 'django_pdf_filler.delete_document'
 
 
-class PageDetailView(DetailView):
+class PageDetailView(PermissionRequiredMixin, DetailView):
     model = Page
+    permission_required = 'django_pdf_filler.change_page'
 
     template_name = 'django_pdf_filler/field_layout.html'
 
@@ -44,7 +52,6 @@ class PageDetailView(DetailView):
         page = self.get_object()
 
         for field in page.fields.all():
-            print(field.name, field.pk, field.inserted)
 
             changed = False
 
@@ -71,9 +78,13 @@ class PageDetailView(DetailView):
         return redirect(self.get_object().get_absolute_url())
 
 
-class PageCopyFieldsView(DetailView):
+class PageCopyFieldsView(PermissionRequiredMixin, DetailView):
     model = Page
     http_method_names = ['post']
+    permission_required = (
+        'django_pdf_filler.change_page',
+        'django_pdf_filler.change_field'
+    )
 
     def post(self, request, pk):
 
@@ -100,27 +111,43 @@ class PageCopyFieldsView(DetailView):
         return redirect(object.get_fields_editor_url())
 
 
-def page_fields(request, pk):
-    page = get_object_or_404(Page, pk=pk)
-
-    field_copy_form = FieldsCopyFromDocumentPageForm(current_page_id=page.pk)
-
-    formset = page_fields_formset(data=request.POST if request.method == 'POST' else None, instance=page)
-
-    if request.method == 'POST' and formset.is_valid():
-        formset.save()
-
-        return redirect(page.get_fields_editor_url())
-
-    return render(request, 'django_pdf_filler/field_editor.html', {
-        'object': page,
-        'formset': formset,
-        'field_copy_form': field_copy_form,
-    })
-
-
-class PageRegenerateImageView(DetailView):
+class PageFieldsView(PermissionRequiredMixin, UpdateView):
     model = Page
+    permission_required = 'django_pdf_filler.change_field'
+    fields = '__all__'
+
+    template_name = 'django_pdf_filler/field_editor.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(PageFieldsView, self).get_context_data(**kwargs)
+
+        form = page_fields_formset(
+            can_delete=self.request.user.has_perm('django_pdf_filler.delete_field'),
+            extra=self.request.user.has_perm('django_pdf_filler.add_field')
+        )
+        context['formset'] = form(
+            data=self.request.POST if self.request.method == 'POST' else None,
+            instance=self.object
+        )
+
+        context['field_copy_form'] = FieldsCopyFromDocumentPageForm(current_page_id=self.object.pk)
+        return context
+
+    def post(self, request, **kwargs):
+        self.object = self.get_object()
+        context = self.get_context_data()
+
+        if context['formset'].is_valid():
+            context['formset'].save()
+
+            return redirect(self.get_object().get_fields_editor_url())
+
+        return self.form_invalid(form=None)
+
+
+class PageRegenerateImageView(PermissionRequiredMixin, DetailView):
+    model = Page
+    permission_required = 'django_pdf_filler.view_page'
 
     def get(self, request, *args, **kwargs):
         page = self.get_object()  # type: Page

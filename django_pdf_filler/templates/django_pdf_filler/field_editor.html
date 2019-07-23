@@ -32,9 +32,10 @@
         {% endbuttons %}
     </form>
 
+    {% if perms.django_pdf_filler.add_field %}
     <hr />
 
-    <h1>Copy Fields From Another Page</h1>
+    <h1>Copy All Fields From Another Page</h1>
 
     <form method="post" action="{% url 'django-pdf-filler:page-fields-copy' pk=object.pk %}">{% csrf_token %}
         {% bootstrap_form field_copy_form layout='horizontal' %}
@@ -42,5 +43,6 @@
             <input type="submit" name="copy_fields" value="Copy Fields" class="btn btn-primary">
         {% endbuttons %}
     </form>
+    {% endif %}
 
 {% endblock %}

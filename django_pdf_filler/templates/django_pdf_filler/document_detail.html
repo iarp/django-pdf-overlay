@@ -2,11 +2,15 @@
 
 {% block content %}
     <div style="float: right;">
-        <a href="{% url 'django-pdf-filler:document-edit' pk=object.pk %}" class="btn btn-primary">Edit</a>
-        <a href="{% url 'django-pdf-filler:document-delete' pk=object.pk %}" class="btn btn-danger">Delete</a>
+        {% if perms.django_pdf_filler.change_document %}
+            <a href="{% url 'django-pdf-filler:document-edit' pk=object.pk %}" class="btn btn-primary">Edit</a>
+        {% endif %}
+        {% if perms.django_pdf_filler.delete_document %}
+            <a href="{% url 'django-pdf-filler:document-delete' pk=object.pk %}" class="btn btn-danger">Delete</a>
+        {% endif %}
     </div>
     <h1>{{ object.name }}</h1>
-    <table class="table">
+    <table class="table table-striped table-hover">
         <thead>
         <tr>
             <th scope="col">Page #</th>
@@ -19,10 +23,22 @@
 
             {% for page in object.pages.all %}
                 <tr>
-                    <td scope="row">{{ page.number }}</td>
+                    <th scope="row">{{ page.number }}</th>
                     <td><a href="{{ page.get_layout_image_url }}"><img src="{{ page.get_layout_image_url }}" style="max-width: 150px;" alt="{{ page }}"/></a></td>
-                    <td><a class="btn btn-primary" href="{{ page.get_fields_layout_url }}">Edit Field Layout</a></td>
-                    <td><a class="btn btn-info" href="{{ page.get_fields_editor_url }}">Edit {{ page.fields.count }} field{{ page.fields.count|pluralize:",s" }}</a></td>
+                    <td>
+                        {% if perms.django_pdf_filler.change_page %}
+                            <a class="btn btn-primary" href="{{ page.get_fields_layout_url }}">Field Layout</a>
+                        {% else %}
+                            <a class="btn btn-primary disabled" href="#">Field Layout</a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if perms.django_pdf_filler.change_field %}
+                            <a class="btn btn-info" href="{{ page.get_fields_editor_url }}">{{ page.fields.count }} field{{ page.fields.count|pluralize:",s" }}</a>
+                        {% else %}
+                            <a class="btn btn-info disabled" href="#">{{ page.fields.count }} field{{ page.fields.count|pluralize:",s" }}</a>
+                        {% endif %}
+                    </td>
                 </tr>
             {% endfor %}
 

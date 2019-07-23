@@ -51,13 +51,15 @@ class FieldEditorForm(forms.ModelForm):
         }
 
 
-page_fields_formset = forms.inlineformset_factory(
-    Page,
-    Field,
-    form=FieldEditorForm,
-    extra=1,
-    can_delete=True,
-)
+def page_fields_formset(can_delete=True, extra=1, **kwargs):
+    return forms.inlineformset_factory(
+        Page,
+        Field,
+        form=FieldEditorForm,
+        extra=extra,
+        can_delete=can_delete,
+        **kwargs
+    )
 
 
 class FieldsCopyFromDocumentPageForm(forms.Form):

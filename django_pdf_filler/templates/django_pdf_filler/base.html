@@ -26,9 +26,11 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'django-pdf-filler:index' %}">Listing</a>
                 </li>
+                {% if perms.django_pdf_filler.add_document %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'django-pdf-filler:create' %}">Create</a>
                 </li>
+                {% endif %}
             </ul>
         </div>
     </nav>
