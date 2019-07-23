@@ -2,6 +2,13 @@
 
 {% block content %}
 
+    {% if object.pk %}
+        <h1>{{ object }}</h1>
+    {% else %}
+        <h1>New Document</h1>
+    {% endif %}
+    <hr />
+
     <form method="post" enctype="multipart/form-data">{% csrf_token %}
         {{ form.as_p }}
         <div class="form-actions">

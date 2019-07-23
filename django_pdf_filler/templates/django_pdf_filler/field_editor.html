@@ -4,8 +4,7 @@
 {% block content %}
 
     <h1><a href="{{ object.document.get_absolute_url }}">{{ object.document.name }}</a>
-        <small class="text-muted">Page #{{ object.number }} Field Editor</small>
-        <a href="{{ object.get_absolute_url }}" class="btn btn-success">Field Layout</a></h1>
+        <small class="text-muted">Page #{{ object.number }} Field Editor</small></h1>
 
     <form class="form-horizontal" method="post" action="{{ object.get_fields_editor_url }}">{% csrf_token %}
         {{ formset.management_form }}
