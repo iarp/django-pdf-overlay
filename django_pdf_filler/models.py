@@ -242,8 +242,12 @@ class Page(models.Model):
             image_location=image_file,
         )
 
-        process = subprocess.Popen(commands, stdout=subprocess.PIPE)
-        process.wait()
+        try:
+            process = subprocess.Popen(commands, stdout=subprocess.PIPE)
+            process.wait()
+        except FileNotFoundError:
+            self.document.delete()
+            raise FileNotFoundError('Unable to locate ImageMagick installation.')
 
         tmp_image_name, _ = self.document.file.name.rsplit('.', 1)
         image_filename = '{}_{}.jpg'.format(tmp_image_name, self.number)
