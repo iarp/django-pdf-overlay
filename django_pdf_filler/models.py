@@ -27,7 +27,7 @@ class OverwriteFileSystemStore(FileSystemStorage):
 
 
 BASE_PDF_LOCAL_STORAGE_LOCATION = getattr(
-    settings, 'DJANGO_PDF_LOCAL_DOCUMENT_STORAGE',
+    settings, 'DJANGO_PDF_FILLER_LOCAL_DOCUMENT_STORAGE',
     os.path.join(settings.BASE_DIR, 'media', 'django_pdf_filler', 'documents')
 )
 local_document_storage = OverwriteFileSystemStore(location=BASE_PDF_LOCAL_STORAGE_LOCATION)
@@ -236,12 +236,11 @@ class Page(models.Model):
 
         image_file = '{}_{}.jpg'.format(filepath_raw, self.number)
 
-        cmd_path = ['/usr/bin/convert']
-        if os.name == 'nt':
-            cmd_path = ['magick.exe', 'convert']
-
-        wanted_page = '{}[{}]'.format(self.document.file.path, self.number)
-        commands = cmd_path + ['-density', '300', '-flatten', wanted_page, image_file]
+        commands = utils.get_pdf_to_image_command(
+            path=self.document.file.path,
+            page_number=self.number,
+            image_location=image_file,
+        )
 
         process = subprocess.Popen(commands, stdout=subprocess.PIPE)
         process.wait()

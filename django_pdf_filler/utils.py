@@ -1,5 +1,8 @@
+import os
 import datetime
 import math
+
+from django.conf import settings
 
 
 def ordinal(n):
@@ -52,3 +55,22 @@ def convert_datetime_objects(obj):
         return ordinal(now.day)
 
     return obj
+
+
+def get_pdf_to_image_command(path, page_number, image_location):
+
+    path_to_magick_convert = getattr(settings, 'DJANGO_PDF_FILLER_MAGICK_LOCATION', None)
+    density = str(getattr(settings, 'DJANGO_PDF_FILLER_MAGICK_DENSITY', 300))
+
+    if path_to_magick_convert:
+        assert isinstance(path_to_magick_convert, list), "DJANGO_PDF_FILLER_MAGICK_LOCATION must be of type list"
+        cmd_path = path_to_magick_convert
+    else:
+        cmd_path = ['/usr/bin/convert']
+        if os.name == 'nt':
+            cmd_path = ['magick.exe', 'convert']
+
+    wanted_page = '{}[{}]'.format(path, page_number)
+    commands = cmd_path + ['-density', density, '-flatten', wanted_page, image_location]
+
+    return commands
