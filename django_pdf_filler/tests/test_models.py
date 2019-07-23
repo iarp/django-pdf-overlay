@@ -24,7 +24,8 @@ class ModelTests(TestCase):
         path_to_file = os.path.join(settings.BASE_DIR, 'django_pdf_filler', 'tests', 'fixtures',
                                     'OHFRowansLawAcknowledgementForm.pdf')
         document = Document(name='Tests Document')
-        document.file.save('OHFRowansLawAcknowledgementForm.pdf', open(path_to_file, 'rb'))
+        with open(path_to_file, 'rb') as fo:
+            document.file.save('OHFRowansLawAcknowledgementForm.pdf', fo)
         document.generate_page_layout_images(create_layout_images=False)
         self.created_documents.append(document)
 
@@ -125,7 +126,7 @@ class ModelTests(TestCase):
         self.assertEqual(today.strftime('%Y-%m-%d'), f.get_default())
 
     def test_field_default_blank(self):
-        self.assertEquals('', Field().get_default())
+        self.assertEqual('', Field().get_default())
 
     def test_field_counter(self):
         doc = self.setup_test_document()
