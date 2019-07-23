@@ -51,6 +51,15 @@ class FieldEditorForm(forms.ModelForm):
         }
 
 
+page_fields_formset = forms.inlineformset_factory(
+    Page,
+    Field,
+    form=FieldEditorForm,
+    extra=1,
+    can_delete=True,
+)
+
+
 class FieldsCopyFromDocumentPageForm(forms.Form):
     page = forms.ModelChoiceField(Page.objects.all())
 

@@ -1,13 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 
-from django.views.generic import View, ListView, DetailView, CreateView, DeleteView, UpdateView
-from django.forms import inlineformset_factory
+from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
 from django.contrib import messages
-from django.db.utils import IntegrityError
 
 from .models import Document, Page, Field
-from .forms import DocumentCreateForm, DocumentUpdateForm, FieldEditorForm, FieldsCopyFromDocumentPageForm
+from .forms import DocumentCreateForm, DocumentUpdateForm, page_fields_formset, FieldsCopyFromDocumentPageForm
 
 
 class DocumentListView(ListView):
@@ -107,14 +105,7 @@ def page_fields(request, pk):
 
     field_copy_form = FieldsCopyFromDocumentPageForm(current_page_id=page.pk)
 
-    document_fields_formset = inlineformset_factory(
-        Page,
-        Field,
-        form=FieldEditorForm,
-        extra=1,
-        can_delete=True,
-    )
-    formset = document_fields_formset(data=request.POST if request.method == 'POST' else None, instance=page)
+    formset = page_fields_formset(data=request.POST if request.method == 'POST' else None, instance=page)
 
     if request.method == 'POST' and formset.is_valid():
         formset.save()
