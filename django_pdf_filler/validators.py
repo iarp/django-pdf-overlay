@@ -14,7 +14,7 @@ def validate_pdf(value):
         raise ValidationError('Object supplied is not a File.')
 
     if not value.name.endswith('.pdf'):
-        raise ValidationError('File supplied is not a Document')
+        raise ValidationError('File supplied is not a PDF')
 
     try:
         PdfFileReader(value)
