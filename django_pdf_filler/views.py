@@ -78,6 +78,12 @@ class PageDetailView(PermissionRequiredMixin, DetailView):
         return redirect(self.get_object().get_absolute_url())
 
 
+class PageEditView(PermissionRequiredMixin, UpdateView):
+    model = Page
+    permission_required = 'django_pdf_filler.change_page'
+    fields = ['image']
+
+
 class PageCopyFieldsView(PermissionRequiredMixin, DetailView):
     model = Page
     http_method_names = ['post']

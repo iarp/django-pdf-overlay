@@ -5,8 +5,6 @@
 
     {% if object.pk %}
         <h1>{{ object }}</h1>
-    {% else %}
-        <h1>New Document</h1>
     {% endif %}
     <hr />
 
@@ -14,11 +12,9 @@
         {% bootstrap_form form %}
         <div class="form-actions">
             {% if object.pk %}
-                <input type="submit" name="submit" value="Replace Document" class="btn btn-primary">
-            {% else %}
-                <input type="submit" name="submit" value="Upload New Document" class="btn btn-primary">
+                <input type="submit" name="submit" value="Upload Image" class="btn btn-primary">
             {% endif %}
-            <a href="{% url 'django-pdf-filler:index' %}" class="btn btn-warning">Cancel</a>
+            <a href="{{ object.document.get_absolute_url }}" class="btn btn-warning">Cancel</a>
         </div>
     </form>
 

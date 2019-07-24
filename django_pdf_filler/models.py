@@ -229,6 +229,10 @@ class Page(models.Model):
                 return self.image.url
 
     def convert_to_image(self):
+
+        if not getattr(settings, 'DJANGO_PDF_FILLER_GENERATE_LAYOUT_IMAGE', True):
+            return False
+
         filepath_raw, ext = self.document.file.path.rsplit('.', 1)
 
         if self.image:

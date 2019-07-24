@@ -24,9 +24,15 @@
             {% for page in object.pages.all %}
                 <tr>
                     <th scope="row">{{ page.number }}</th>
-                    <td><a href="{{ page.get_layout_image_url }}"><img src="{{ page.get_layout_image_url }}" style="max-width: 150px;" alt="{{ page }}"/></a></td>
                     <td>
-                        {% if perms.django_pdf_filler.change_page %}
+                        {% if page.image %}
+                            <a href="{{ page.get_layout_image_url }}"><img src="{{ page.get_layout_image_url }}" style="max-width: 150px;" alt="{{ page }}"/></a>
+                        {% elif perms.django_pdf_filler.change_page %}
+                            <a href="{% url 'django-pdf-filler:page-edit' pk=page.pk %}" class="btn btn-primary">Add Image</a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if perms.django_pdf_filler.change_page and page.image %}
                             <a class="btn btn-primary" href="{{ page.get_fields_layout_url }}">Field Layout</a>
                         {% else %}
                             <a class="btn btn-primary disabled" href="#">Field Layout</a>
