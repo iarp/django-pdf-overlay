@@ -126,3 +126,4 @@ dmypy.json
 *.pdf
 *.jpg
 temp.py
+docs/_build

@@ -47,7 +47,6 @@ class FieldEditorForm(forms.ModelForm):
             'font_color': 'hex code of the color you want. You can also supply '
                           'english names of simple colours (red, black, blue... etc)',
             'font': 'The font must be installed on the server if you plan on using a non-standard font',
-            'name': 'Must be unique to this page.'
         }
 
 
@@ -71,7 +70,7 @@ class FieldsCopyFromDocumentPageForm(forms.Form):
         required=False
     )
 
-    def __init__(self, *args, current_page_id=None, **kwargs):
+    def __init__(self, current_page_id=None, *args, **kwargs):
         super(FieldsCopyFromDocumentPageForm, self).__init__(*args, **kwargs)
         if current_page_id:
             self.fields['page'].queryset = Page.objects.all().exclude(pk=current_page_id)

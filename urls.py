@@ -14,12 +14,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include, re_path
 from django.conf import settings
+from django.conf.urls import url, include
 from django.views.static import serve
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('django-pdf-filler/', include('django_pdf_filler.urls', namespace='django-pdf-filler')),
-    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT,}),
+    url(r'^admin/', admin.site.urls),
+    url(r'^django-pdf-filler/', include('django_pdf_filler.urls', namespace='django-pdf-filler')),
+    url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT,}),
 ]
