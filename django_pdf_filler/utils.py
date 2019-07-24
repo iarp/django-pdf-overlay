@@ -11,30 +11,36 @@ def ordinal(n):
 
 def get_field_data(attribute_name, object_name=None, default=None, **kwargs):
 
-    if object_name:
-        if object_name in kwargs:
-            tmp = kwargs[object_name]
-            if hasattr(tmp, attribute_name):
-                val = getattr(tmp, attribute_name, default)
-                if callable(val):
-                    return val()
-                return val
-            elif isinstance(tmp, dict):
-                return tmp[attribute_name]
-            return tmp
+    def get_val(obj, attr):
+        value = None
+
+        if hasattr(obj, attr):
+            value = getattr(obj, attr, default)
+        elif isinstance(obj, dict) and attr in obj:
+            value = obj[attr]
+
+        if callable(value):
+            return value()
+        return value
+
+    # kwargs is required as well if we're given an object name, ensure the
+    # object name wanted was in fact given as a parameter
+    if not kwargs or (object_name and object_name not in kwargs):
         return default
 
-    if not kwargs:
-        return default
+    if object_name:
+        tmp = kwargs[object_name]
+
+        val = get_val(tmp, attribute_name)
+        if val is not None:
+            return val
+        return tmp
 
     for tmp in kwargs.values():
-        if hasattr(tmp, attribute_name):
-            val = getattr(tmp, attribute_name, default)
-            if callable(val):
-                return val()
+        val = get_val(tmp, attribute_name)
+
+        if val is not None:
             return val
-        elif isinstance(tmp, dict) and attribute_name in tmp:
-            return tmp[attribute_name]
 
     return default
 

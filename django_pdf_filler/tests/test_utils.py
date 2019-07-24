@@ -43,8 +43,16 @@ class UtilsTests(TestCase):
 
         self.assertEqual('here in default', utils.get_field_data('name', default='here in default'))
 
+        def method_test():
+            return 'here in method_test'
+
         d = {
-            'name': 'here in dict type'
+            'name': 'here in dict type',
+            'custom_callable': method_test,
         }
         self.assertEqual('here in dict type', utils.get_field_data('name', d=d))
+        self.assertEqual('here in method_test', utils.get_field_data('custom_callable', 'd', d=d))
+        self.assertEqual('here in method_test', utils.get_field_data('custom_callable', d=d))
         self.assertIsNone(utils.get_field_data('blah', d=d))
+
+        self.assertIsNone(utils.get_field_data('name'))
