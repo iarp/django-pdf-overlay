@@ -30,10 +30,15 @@ class UtilsTests(TestCase):
     def test_get_field_data(self):
         class TestClass(object):
             name = 'here in test class'
+
+            def custom_callable(self):
+                return 'here in callable method'
+
         obj = TestClass()
 
         self.assertEqual('here in test class', utils.get_field_data('name', obj=obj))
         self.assertEqual('here in test class', utils.get_field_data('name', 'obj', obj=obj))
+        self.assertEqual('here in callable method', utils.get_field_data('custom_callable', 'obj', obj=obj))
         self.assertIsNone(utils.get_field_data('blah', obj=obj))
 
         self.assertEqual('here in default', utils.get_field_data('name', default='here in default'))

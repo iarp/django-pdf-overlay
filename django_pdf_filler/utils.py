@@ -15,7 +15,10 @@ def get_field_data(attribute_name, object_name=None, default=None, **kwargs):
         if object_name in kwargs:
             tmp = kwargs[object_name]
             if hasattr(tmp, attribute_name):
-                return getattr(tmp, attribute_name, default)
+                val = getattr(tmp, attribute_name, default)
+                if callable(val):
+                    return val()
+                return val
             elif isinstance(tmp, dict):
                 return tmp[attribute_name]
             return tmp
@@ -26,7 +29,10 @@ def get_field_data(attribute_name, object_name=None, default=None, **kwargs):
 
     for tmp in kwargs.values():
         if hasattr(tmp, attribute_name):
-            return getattr(tmp, attribute_name, default)
+            val = getattr(tmp, attribute_name, default)
+            if callable(val):
+                return val()
+            return val
         elif isinstance(tmp, dict) and attribute_name in tmp:
             return tmp[attribute_name]
 
