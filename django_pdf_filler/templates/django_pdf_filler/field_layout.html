@@ -4,7 +4,9 @@
     <style type="text/css">
     #texts {
         border: 1px dotted;
-        background: url({{ object.get_layout_image_url }});
+        {% if object.image %}
+        background: url({{ object.image.url }});
+        {% endif %}
         background-size: 100% 100%
     }
     </style>

@@ -64,3 +64,8 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+# DJANGO_PDF_FILLER_GENERATE_LAYOUT_IMAGE = False
+# DJANGO_PDF_FILLER_LOCAL_DOCUMENT_STORAGE = os.path.join(BASE_DIR, 'media', 'django_pdf_filler', 'documents')
+# DJANGO_PDF_FILLER_MAGICK_LOCATION = None
+# DJANGO_PDF_FILLER_MAGICK_DENSITY = 300

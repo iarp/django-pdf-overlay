@@ -14,7 +14,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils.functional import cached_property
 
-from . import validators, utils
+from . import validators, utils, app_settings
 
 
 class OverwriteFileSystemStore(FileSystemStorage):
@@ -26,11 +26,7 @@ class OverwriteFileSystemStore(FileSystemStorage):
         return name
 
 
-BASE_PDF_LOCAL_STORAGE_LOCATION = getattr(
-    settings, 'DJANGO_PDF_FILLER_LOCAL_DOCUMENT_STORAGE',
-    os.path.join(settings.BASE_DIR, 'media', 'django_pdf_filler', 'documents')
-)
-local_document_storage = OverwriteFileSystemStore(location=BASE_PDF_LOCAL_STORAGE_LOCATION)
+local_document_storage = OverwriteFileSystemStore(location=app_settings.LOCAL_DOCUMENT_STORAGE)
 
 
 class Document(models.Model):
@@ -175,7 +171,7 @@ class Document(models.Model):
                 'height': height,
             })
 
-            if create_layout_images:
+            if create_layout_images and app_settings.GENERATE_LAYOUT_IMAGE:
                 page.convert_to_image()
 
             existing_pages.add(page.pk)
@@ -206,6 +202,9 @@ class Page(models.Model):
     width = models.PositiveIntegerField(default=612)
     height = models.PositiveIntegerField(default=792)
 
+    inserted = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
     def __str__(self):
         return '{} Page #{}'.format(self.document, self.number)
 
@@ -221,17 +220,7 @@ class Page(models.Model):
     def get_image_regen_url(self):
         return reverse('django-pdf-filler:page-regen-image', args=[self.pk])
 
-    def get_layout_image_url(self):
-        try:
-            return self.image.url
-        except:
-            if self.convert_to_image():
-                return self.image.url
-
     def convert_to_image(self):
-
-        if not getattr(settings, 'DJANGO_PDF_FILLER_GENERATE_LAYOUT_IMAGE', True):
-            return False
 
         filepath_raw, ext = self.document.file.path.rsplit('.', 1)
 
@@ -274,7 +263,6 @@ class Field(models.Model):
     x = models.IntegerField(default=10)
     y = models.IntegerField(default=10)
     default = models.CharField(max_length=255, blank=True)
-    system_info = models.CharField(max_length=255, blank=True)
 
     obj_name = models.CharField(max_length=255, blank=True)
 
