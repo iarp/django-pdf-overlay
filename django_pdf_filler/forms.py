@@ -8,7 +8,7 @@ class RegenPageLayouts(forms.ModelForm):
 
     def save(self, commit=True):
         obj = super(RegenPageLayouts, self).save(commit=commit)
-        obj.generate_page_layout_images()
+        obj.setup_document()
         return obj
 
 

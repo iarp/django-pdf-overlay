@@ -136,7 +136,7 @@ class Document(models.Model):
         file.close()
         return response
 
-    def generate_page_layout_images(self, create_layout_images=True):
+    def setup_document(self, create_layout_images=True):
         template_pdf = PdfFileReader(self.file.file)
 
         existing_pages = set()

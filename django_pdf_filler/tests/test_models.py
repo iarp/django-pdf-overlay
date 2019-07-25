@@ -27,7 +27,7 @@ class ModelTests(TestCase):
         document = Document(name='Tests Document')
         with open(path_to_file, 'rb') as fo:
             document.file.save('OHFRowansLawAcknowledgementForm.pdf', fo)
-        document.generate_page_layout_images(create_layout_images=False)
+        document.setup_document(create_layout_images=False)
         self.created_documents.append(document)
 
         self.assertEqual(2, document.pages.count())
