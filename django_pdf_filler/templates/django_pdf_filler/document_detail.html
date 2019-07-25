@@ -1,5 +1,13 @@
 {% extends 'django_pdf_filler/base.html' %}
 
+{% block header %}
+    <style type="text/css">
+    .thumbnail {
+        max-width: 150px;
+    }
+    </style>
+{% endblock %}
+
 {% block content %}
     <div style="float: right;">
         {% if perms.django_pdf_filler.change_document %}
@@ -14,9 +22,8 @@
         <thead>
         <tr>
             <th scope="col">Page #</th>
-            <th scope="col">Image</th>
+            <th scope="col">Edit Fields</th>
             <th scope="col">Edit Layout</th>
-            <th scope="col">Edit Field(s)</th>
         </tr>
         </thead>
         <tbody>
@@ -25,26 +32,23 @@
                 <tr>
                     <th scope="row">{{ page.number }}</th>
                     <td>
-                        {% if page.image %}
-                            <a href="{{ page.image.url }}"><img src="{{ page.image.url }}" style="max-width: 150px;" alt="{{ page }}"/></a>
-                        {% elif perms.django_pdf_filler.change_page %}
-                            <a href="{% url 'django-pdf-filler:page-edit' pk=page.pk %}" class="btn btn-primary">Add Image</a>
+                        {% if perms.django_pdf_filler.change_field %}
+                            <a class="btn btn-info" href="{{ page.get_fields_editor_url }}">{{ page.fields.count }} field{{ page.fields.count|pluralize:",s" }}</a>
+                        {% else %}
+                            <a class="btn btn-info disabled" href="#">{{ page.fields.count }} field{{ page.fields.count|pluralize:",s" }}</a>
                         {% endif %}
                     </td>
                     <td>
                         {% if perms.django_pdf_filler.change_page and page.image %}
                             <a class="btn btn-primary" href="{{ page.get_fields_layout_url }}">Field Layout</a>
                         {% elif not page.image %}
-                            Requires Layout Image
+                            {% if perms.django_pdf_filler.change_page %}
+                                <a href="{{ page.get_edit_url }}">Requires Layout Image</a>
+                            {% else %}
+                                Requires Layout Image
+                            {% endif %}
                         {% else %}
                             <a class="btn btn-primary disabled" href="#">Field Layout</a>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if perms.django_pdf_filler.change_field %}
-                            <a class="btn btn-info" href="{{ page.get_fields_editor_url }}">{{ page.fields.count }} field{{ page.fields.count|pluralize:",s" }}</a>
-                        {% else %}
-                            <a class="btn btn-info disabled" href="#">{{ page.fields.count }} field{{ page.fields.count|pluralize:",s" }}</a>
                         {% endif %}
                     </td>
                 </tr>

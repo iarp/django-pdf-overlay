@@ -26,6 +26,9 @@ FIELD_VALUE_JOINS = getattr(settings, 'DJANGO_PDF_FILLER_FIELD_VALUE_JOINS', ', 
 FIELD_CHAIN_SPLITTER = getattr(settings, 'DJANGO_PDF_FILLER_FIELD_CHAIN_SPLITTER', '|')
 FIELD_DATETIME_SPLITTER = getattr(settings, 'DJANGO_PDF_FILLER_FIELD_DATETIME_SPLITTER', ':')
 
-assert isinstance(FIELD_VALUE_JOINS, (str, list, set, tuple)), "DJANGO_PDF_FILLER_FIELD_VALUE_JOINS must be of type list, set, tuple, or str"
-assert FIELD_CHAIN_SPLITTER != FIELD_DATETIME_SPLITTER, "DJANGO_PDF_FILLER_FIELD_CHAIN_SPLITTER and DJANGO_PDF_FILLER_FIELD_DATETIME_SPLITTER cannot be the same value."
-assert isinstance(MAGICK_LOCATION, list), "DJANGO_PDF_FILLER_MAGICK_LOCATION must be of type list or str"
+assert isinstance(FIELD_VALUE_JOINS, (str, list, set, tuple)), \
+    "DJANGO_PDF_FILLER_FIELD_VALUE_JOINS must be of type list, set, tuple, or str"
+assert FIELD_CHAIN_SPLITTER != FIELD_DATETIME_SPLITTER, \
+    "DJANGO_PDF_FILLER_FIELD_CHAIN_SPLITTER and DJANGO_PDF_FILLER_FIELD_DATETIME_SPLITTER cannot be the same value."
+assert isinstance(MAGICK_LOCATION, list), \
+    "DJANGO_PDF_FILLER_MAGICK_LOCATION must be of type list or str"

@@ -10,8 +10,8 @@ name
 default (='')
     If no value was found on the model instance, do you have a default you want to supply?
 
-    To print the current datetime as a field on the document supply dt:<datetime format>
-    (e.g. dt:%Y-%m-%d) and the field will print YYYY-mm-dd using the example.
+    To print the current datetime as a field on the document, leave obj name blank and
+    supply dt:<datetime format> (e.g. dt:%Y-%m-%d), the field will print YYYY-mm-dd.
 
 obj name (='')
     Where to find the data from the parameters passed to `render_pages` in your code.

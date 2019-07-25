@@ -1,13 +1,12 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
 from django.contrib import messages
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.contrib.auth.decorators import permission_required
 
 from .models import Document, Page, Field
-from .forms import DocumentCreateForm, DocumentUpdateForm, page_fields_formset, FieldsCopyFromDocumentPageForm
+from . import forms
 
 
 class DocumentListView(PermissionRequiredMixin, ListView):
@@ -20,7 +19,7 @@ class DocumentListView(PermissionRequiredMixin, ListView):
 
 class DocumentCreateView(PermissionRequiredMixin, CreateView):
     model = Document
-    form_class = DocumentCreateForm
+    form_class = forms.DocumentCreateForm
     permission_required = 'django_pdf_filler.add_document'
 
 
@@ -31,7 +30,7 @@ class DocumentDetailView(PermissionRequiredMixin, DetailView):
 
 class DocumentUpdateView(PermissionRequiredMixin, UpdateView):
     model = Document
-    form_class = DocumentUpdateForm
+    form_class = forms.DocumentUpdateForm
     permission_required = 'django_pdf_filler.change_document'
 
 
@@ -81,7 +80,7 @@ class PageDetailView(PermissionRequiredMixin, DetailView):
 class PageEditView(PermissionRequiredMixin, UpdateView):
     model = Page
     permission_required = 'django_pdf_filler.change_page'
-    fields = ['image']
+    form_class = forms.PageEditorForm
 
 
 class PageCopyFieldsView(PermissionRequiredMixin, DetailView):
@@ -96,7 +95,7 @@ class PageCopyFieldsView(PermissionRequiredMixin, DetailView):
 
         object = self.get_object()  # type: Page
 
-        field_copy_form = FieldsCopyFromDocumentPageForm(data=request.POST)
+        field_copy_form = forms.FieldsCopyFromDocumentPageForm(data=request.POST)
         if field_copy_form.is_valid():
             selected_page = field_copy_form.cleaned_data['page']
 
@@ -127,7 +126,7 @@ class PageFieldsView(PermissionRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(PageFieldsView, self).get_context_data(**kwargs)
 
-        form = page_fields_formset(
+        form = forms.page_fields_formset(
             can_delete=self.request.user.has_perm('django_pdf_filler.delete_field'),
             extra=self.request.user.has_perm('django_pdf_filler.add_field')
         )
@@ -136,7 +135,7 @@ class PageFieldsView(PermissionRequiredMixin, UpdateView):
             instance=self.object
         )
 
-        context['field_copy_form'] = FieldsCopyFromDocumentPageForm(current_page_id=self.object.pk)
+        context['field_copy_form'] = forms.FieldsCopyFromDocumentPageForm(current_page_id=self.object.pk)
         return context
 
     def post(self, request, **kwargs):

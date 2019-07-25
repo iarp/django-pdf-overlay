@@ -4,6 +4,8 @@ Installation
 Requirements
 ------------
 
+- `ImageMagick <https://imagemagick.org/script/download.php>`__
+
 - Python 2.7, 3.3, 3.4, 3.5, 3.6, 3.7
 
 - Django (1.11+)

@@ -189,6 +189,9 @@ class Page(models.Model):
     def get_absolute_url(self):
         return reverse('django-pdf-filler:page-layout', args=[self.pk])
 
+    def get_edit_url(self):
+        return reverse('django-pdf-filler:page-edit', args=[self.pk])
+
     def get_fields_editor_url(self):
         return reverse('django-pdf-filler:page-fields', args=[self.pk])
 

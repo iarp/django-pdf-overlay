@@ -63,8 +63,7 @@ class FieldEditorForm(forms.ModelForm):
                         "See documentation for more information.",
             'default': 'If no value is found, is there a default value you wish '
                        'to supply? See documentation for more options.',
-            'font_color': 'hex code of the color you want. You can also supply '
-                          'english names of simple colours (red, black, blue... etc)',
+            'font_color': 'English name, hashed hex code, OR comma separated RGB values (e.g. 230,230,250)',
             'font': 'The font must be installed on the server if you plan on using a non-standard font',
         }
 
@@ -102,3 +101,11 @@ class FieldsCopyFromDocumentPageForm(forms.Form):
         super(FieldsCopyFromDocumentPageForm, self).__init__(*args, **kwargs)
         if current_page_id:
             self.fields['page'].queryset = Page.objects.all().exclude(pk=current_page_id)
+
+
+class PageEditorForm(forms.ModelForm):
+    class Meta:
+        model = Page
+        fields = ['image']
+
+    image = forms.ImageField(required=True)
