@@ -76,13 +76,10 @@ def convert_datetime_objects(obj):
 
 def get_pdf_to_image_command(path, page_number, image_location):
 
-    cmd_path = app_settings.MAGICK_LOCATION
-    if not cmd_path:
-        cmd_path = ['/usr/bin/convert']
-        if os.name == 'nt':
-            cmd_path = ['magick.exe', 'convert']
+    commands = app_settings.MAGICK_LOCATION.copy()
 
-    commands = cmd_path + ['-density', app_settings.MAGICK_DENSITY]
+    if app_settings.MAGICK_DENSITY:
+        commands.extend(['-density', app_settings.MAGICK_DENSITY])
     if app_settings.MAGICK_FLATTEN:
         commands.append('-flatten')
 
