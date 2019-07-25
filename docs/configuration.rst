@@ -18,6 +18,9 @@ DJANGO_PDF_FILLER_MAGICK_DENSITY (='300')
     When creating the images for field layout purposes, what level of pixel
     quality do you want?
 
+DJANGO_PDF_FILLER_MAGICK_FLATTEN (=True)
+    Pass -flatten to magick conversion? True or False.
+
 DJANGO_PDF_FILLER_LOCAL_DOCUMENT_STORAGE (=os.path.join(BASE_DIR, 'media', 'django_pdf_filler', 'documents'))
     The document uploaded MUST be located locally to the server itself.
     Where do we place these files?

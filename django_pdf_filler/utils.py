@@ -82,7 +82,11 @@ def get_pdf_to_image_command(path, page_number, image_location):
         if os.name == 'nt':
             cmd_path = ['magick.exe', 'convert']
 
+    commands = cmd_path + ['-density', app_settings.MAGICK_DENSITY]
+    if app_settings.MAGICK_FLATTEN:
+        commands.append('-flatten')
+
     wanted_page = '{}[{}]'.format(path, page_number)
-    commands = cmd_path + ['-density', app_settings.MAGICK_DENSITY, '-flatten', wanted_page, image_location]
+    commands.extend([wanted_page, image_location])
 
     return commands
