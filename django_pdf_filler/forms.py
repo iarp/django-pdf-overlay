@@ -1,6 +1,7 @@
 from django import forms
 
 from .models import Document, Page, Field
+from django_pdf_filler import app_settings
 
 
 class RegenPageLayouts(forms.ModelForm):
@@ -33,6 +34,24 @@ class DocumentUpdateForm(RegenPageLayouts):
         fields = ['file']
 
 
+def split_and_strip(value):
+    # Check if the value supplied is permitted to have a whitespace at the end.
+    if not value.strip():
+        return ''
+    split_values = value.split(',')
+
+    # Only 1 value in the split means the last character is not
+    # a possible joiner to be used in field rendering.
+    if len(split_values) <= 1:
+        return value.strip()
+
+    # However if the last item in the list is NOT a possible field value joiner, then just strip
+    elif split_values[-1] not in app_settings.FIELD_VALUE_JOINS:
+        return value.strip()
+
+    return value
+
+
 class FieldEditorForm(forms.ModelForm):
     class Meta:
         model = Field
@@ -48,6 +67,15 @@ class FieldEditorForm(forms.ModelForm):
                           'english names of simple colours (red, black, blue... etc)',
             'font': 'The font must be installed on the server if you plan on using a non-standard font',
         }
+
+    name = forms.CharField(strip=False, required=True)
+    obj_name = forms.CharField(strip=False, required=False)
+
+    def clean_obj_name(self):
+        return split_and_strip(self.cleaned_data['obj_name'])
+
+    def clean_name(self):
+        return split_and_strip(self.cleaned_data['name'])
 
 
 def page_fields_formset(can_delete=True, extra=1, **kwargs):

@@ -56,3 +56,10 @@ class UtilsTests(TestCase):
         self.assertIsNone(utils.get_field_data('blah', d=d))
 
         self.assertIsNone(utils.get_field_data('name'))
+
+    def test_split_and_strip(self):
+        self.assertEqual('', forms.split_and_strip(' '))
+        self.assertEqual('asd', forms.split_and_strip('asd '))
+        self.assertEqual('asd, ', forms.split_and_strip('asd, '))
+        self.assertEqual('asd,blahs', forms.split_and_strip('asd,blahs '))
+        self.assertEqual('asd,blahs, ', forms.split_and_strip('asd,blahs, '))
