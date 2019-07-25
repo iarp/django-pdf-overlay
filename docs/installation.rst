@@ -28,6 +28,7 @@ settings.py::
     INSTALLED_APPS = (
         ...
         'django_pdf_filler',
+        'bootstrap4',
         ...
     )
 
@@ -38,6 +39,35 @@ urls.py::
         url(r'^django-pdf-filler/', include('django_pdf_filler.urls')),
         ...
     ]
+
+
+Development Settings
+--------------------
+
+django-pdf-filler requires your project to have media settings configured for
+the layout images to appear properly.
+
+During development (`DEBUG=True`) that means you may not see the layout image at all.
+
+The settings provided below are meant to be used in development ONLY, do not use these on production!
+
+settings.py::
+
+    if DEBUG:
+        MEDIA_URL = '/media/'
+        MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+urls.py::
+
+    from django.conf import settings
+
+    if settings.DEBUG:
+        from django.conf.urls import url
+        from django.views.static import serve
+        urlpatterns = urlpatterns + [
+            url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT,}),
+        ]
+
 
 Post-Installation
 -----------------

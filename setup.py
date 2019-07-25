@@ -1,5 +1,5 @@
 import io
-from setuptools import setup
+from setuptools import find_packages, setup
 
 long_description = io.open('README.rst', encoding='utf-8').read()
 
@@ -38,7 +38,7 @@ METADATA = dict(
         'Framework :: Django :: 2.1',
         'Framework :: Django :: 2.2',
     ],
-    packages=['django_pdf_filler'],
+    packages=find_packages(),
 )
 
 if __name__ == '__main__':
