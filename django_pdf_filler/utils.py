@@ -10,7 +10,11 @@ def ordinal(n):
     return "%d%s" % (n, "tsnrhtdd"[(math.floor(n / 10) % 10 != 1) * (n % 10 < 4) * n % 10::4])
 
 
-def get_field_data(attribute_name, object_name=None, default=None, **kwargs):
+def get_field_data(attribute_name, default=None, **kwargs):
+
+    object_name = None
+    if attribute_name and '.' in attribute_name:
+        object_name, attribute_name = attribute_name.split('.', 1)
 
     def get_val(obj, attr):
         value = None

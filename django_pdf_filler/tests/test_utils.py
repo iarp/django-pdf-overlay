@@ -3,7 +3,7 @@ import datetime
 from django.test import TestCase
 
 
-from django_pdf_filler import utils
+from django_pdf_filler import utils, forms
 
 
 class UtilsTests(TestCase):
@@ -36,12 +36,15 @@ class UtilsTests(TestCase):
 
         obj = TestClass()
 
-        self.assertEqual('here in test class', utils.get_field_data('name', obj=obj))
-        self.assertEqual('here in test class', utils.get_field_data('name', 'obj', obj=obj))
-        self.assertEqual('here in callable method', utils.get_field_data('custom_callable', 'obj', obj=obj))
+        self.assertIsNone(utils.get_field_data('name'))
         self.assertIsNone(utils.get_field_data('blah', obj=obj))
 
-        self.assertEqual('here in default', utils.get_field_data('name', default='here in default'))
+        self.assertEqual('here in test class', utils.get_field_data('name', obj=obj))
+        self.assertEqual('here in test class', utils.get_field_data('obj.name', obj=obj))
+        self.assertEqual('here in callable method', utils.get_field_data('custom_callable', obj=obj))
+        self.assertEqual('here in callable method', utils.get_field_data('obj.custom_callable', obj=obj))
+
+        self.assertEqual('here in default', utils.get_field_data('missing', default='here in default', obj=obj))
 
         def method_test():
             return 'here in method_test'
@@ -51,11 +54,8 @@ class UtilsTests(TestCase):
             'custom_callable': method_test,
         }
         self.assertEqual('here in dict type', utils.get_field_data('name', d=d))
-        self.assertEqual('here in method_test', utils.get_field_data('custom_callable', 'd', d=d))
         self.assertEqual('here in method_test', utils.get_field_data('custom_callable', d=d))
-        self.assertIsNone(utils.get_field_data('blah', d=d))
-
-        self.assertIsNone(utils.get_field_data('name'))
+        self.assertEqual('here in method_test', utils.get_field_data('d.custom_callable', d=d))
 
     def test_split_and_strip(self):
         self.assertEqual('', forms.split_and_strip(' '))

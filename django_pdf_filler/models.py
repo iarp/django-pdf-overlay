@@ -12,7 +12,7 @@ from django.core.files.storage import FileSystemStorage
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
-from django.utils.functional import cached_property
+from django.utils.encoding import force_str
 
 from . import validators, utils, app_settings
 
@@ -83,29 +83,35 @@ class Document(models.Model):
             for field in page.fields.all():
                 data = None
 
-                if field.obj_name:
-                    composed_data = []
-                    for possible_field in field.obj_name.split(','):
-                        if '.' in possible_field:
-                            obj, attr_name = possible_field.split('.', 1)
-                            data = utils.get_field_data(object_name=obj, attribute_name=attr_name, **kwargs)
-                            if data:
-                                composed_data.append(data)
-                        else:
-                            data = utils.get_field_data(attribute_name=possible_field, **kwargs)
-                            if data:
-                                composed_data.append(data)
+                # Keep for backwards compatibility
+                val = field.obj_name or field.name
 
-                    if composed_data:
-                        data = ' '.join(composed_data)
+                # Due to chaining fields, we need somewhere to store
+                # all the values for joining later.
+                composed_data = []
 
-                else:
+                wanted_objects = val.split(',')
 
-                    try:
-                        obj, attr_name = field.name.split('.', 1)
-                        data = utils.get_field_data(object_name=obj, attribute_name=attr_name, **kwargs)
-                    except ValueError:
-                        data = utils.get_field_data(attribute_name=field.name, **kwargs)
+                # The last object in the split list may be a join value,
+                # check it against what is allowed
+                joiner = ' '
+                if len(wanted_objects) > 1:
+                    possible_joiner = wanted_objects[-1]
+                    if possible_joiner in app_settings.FIELD_VALUE_JOINS:
+                        wanted_objects = wanted_objects[:-1]
+                        joiner = possible_joiner
+
+                # Fields can be chained by commas
+                for possible_field in wanted_objects:
+
+                    data = utils.get_field_data(possible_field, **kwargs)
+
+                    # We only care for data that exists, do not join on blanks
+                    if data:
+                        composed_data.append(force_str(data))
+
+                if composed_data:
+                    data = joiner.join(composed_data)
 
                 if data is None:
                     data = field.get_default()
