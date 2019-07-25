@@ -4,8 +4,6 @@ Installation
 Requirements
 ------------
 
-- `ImageMagick <https://imagemagick.org/script/download.php>`__
-
 - Python 2.7, 3.3, 3.4, 3.5, 3.6, 3.7
 
 - Django (1.11+)
@@ -15,6 +13,11 @@ Requirements
 - reportlab
 
 - django-bootstrap4
+
+- `ImageMagick <https://imagemagick.org/script/download.php>`__
+
+  - Only required if you want auto-generated layout images.
+  - If you do not want to or cannot install ImageMagick see `GENERATE_LAYOUT_IMAGE <configuration.html>`__
 
 Django
 ------

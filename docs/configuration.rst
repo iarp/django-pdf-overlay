@@ -4,6 +4,14 @@ Configuration
 Available Settings
 ------------------
 
+DJANGO_PDF_FILLER_GENERATE_LAYOUT_IMAGE (=True)
+    Enable or disable whether or not the system will auto-generate layout images from PDF.
+
+    Useful when you cannot or don't want to install ImageMagic.
+
+    Disabling this does require you to manually create the image and attach
+    it to the page accordingly before field layout is possible.
+
 DJANGO_PDF_FILLER_MAGICK_LOCATION
     The location of ImageMagick's convert utility. Value must be a list,
     if you need to add options each option must be its own string entry
@@ -27,14 +35,6 @@ DJANGO_PDF_FILLER_LOCAL_DOCUMENT_STORAGE (=os.path.join(BASE_DIR, 'media', 'djan
 
     Regardless of default storage and media settings in django,
     this location takes precedence as the file must be on the server.
-
-DJANGO_PDF_FILLER_GENERATE_LAYOUT_IMAGE (=True)
-    Enable or disable whether or not the system will auto-generate layout images from PDF.
-
-    Useful when you cannot or don't want to install ImageMagic.
-
-    Disabling this does require you to manually create the image and attach
-    it to the page accordingly before field layout is possible.
 
 DJANGO_PDF_FILLER_FIELD_VALUE_JOINS (=', .-_')
     When you chain object attributes in "obj name" on a field, you can select what
