@@ -13,7 +13,7 @@ def ordinal(n):
 def get_field_data(attribute_name, default=None, **kwargs):
 
     object_name = None
-    if attribute_name and '.' in attribute_name:
+    if '.' in attribute_name:
         object_name, attribute_name = attribute_name.split('.', 1)
 
     def get_val(obj, attr):
@@ -64,6 +64,7 @@ def convert_datetime_objects(obj):
         t, f = obj.split(':', 1)
         return now.strftime(f)
 
+    # Backwards compatibility reasons
     if obj == 'month_long':
         return now.strftime("%B")
     if obj == 'year_short':

@@ -5,6 +5,7 @@ import os
 import tempfile
 import subprocess
 import copy
+import warnings
 from reportlab.pdfgen import canvas
 from django.http import HttpResponse
 from django.conf import settings
@@ -291,8 +292,17 @@ class Field(models.Model):
 
             data = utils.get_field_data(possible_field, **kwargs)
 
-            if dt_format:
-                data = data.strftime(dt_format)
+            if isinstance(data, (datetime.datetime, datetime.date, datetime.time)):
+                if dt_format:
+                    data = data.strftime(dt_format)
+                else:
+                    data = data.isoformat()
+            elif dt_format:
+                # If we were supplied with a datetime format but the data is NOT a datetime object, flag a warning.
+                warnings.warn('Field "{}" with obj name "{}" was supplied with a datetime '
+                              'format of "{}" but type {} was found instead.'.format(
+                    self.name, possible_field, dt_format, type(data).__name__
+                ), SyntaxWarning)
 
             # We only care for data that exists, do not join on blanks
             if data:

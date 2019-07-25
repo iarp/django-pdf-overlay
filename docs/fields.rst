@@ -28,7 +28,7 @@ obj name (='')
 
     It is possible to chain object.attributes (see Field Chaining below).
 
-    If the value of the object.attribute is a date or datetime object, you can supply a
+    If the value of the object.attribute is a date or datetime object, you must supply a
     format to be used as such::
 
         user.date_joined:%Y-%m-%d

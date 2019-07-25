@@ -1,5 +1,6 @@
 import datetime
 import os
+import warnings
 from PyPDF2 import PdfFileReader
 
 from django.test import TestCase
@@ -168,3 +169,14 @@ class ModelTests(TestCase):
 
         field.obj_name = 'user.date_joined:%Y-%m-%d|user.first_name|user.last_name'
         self.assertEqual('{} John Doe'.format(user.date_joined.strftime('%Y-%m-%d')), field.process(user=user))
+
+        field.obj_name = 'user.date_joined'
+        self.assertEqual(user.date_joined.isoformat(), field.process(user=user))
+
+        field.obj_name = 'user.first_name:%Y-%m-%d'
+        with warnings.catch_warnings(record=True) as w:
+            val = field.process(user=user)
+            self.assertEqual('John', val)
+            msg = w[-1]
+            self.assertTrue(issubclass(msg.category, SyntaxWarning))
+            self.assertIn('Field "FullName" with obj name "user.first_name"', str(msg.message))
