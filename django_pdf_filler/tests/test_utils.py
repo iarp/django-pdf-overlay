@@ -60,6 +60,6 @@ class UtilsTests(TestCase):
     def test_split_and_strip(self):
         self.assertEqual('', forms.split_and_strip(' '))
         self.assertEqual('asd', forms.split_and_strip('asd '))
-        self.assertEqual('asd, ', forms.split_and_strip('asd, '))
-        self.assertEqual('asd,blahs', forms.split_and_strip('asd,blahs '))
-        self.assertEqual('asd,blahs, ', forms.split_and_strip('asd,blahs, '))
+        self.assertEqual('asd| ', forms.split_and_strip('asd| '))
+        self.assertEqual('asd|blahs', forms.split_and_strip('asd|blahs '))
+        self.assertEqual('asd|blahs| ', forms.split_and_strip('asd|blahs| '))

@@ -60,7 +60,10 @@ class Document(models.Model):
             else:
                 can.setFont(field.font, 12)
 
-            if field.font_color:
+            if ',' in field.font_color:
+                r, g, b = field.font_color.replace(' ', '').split(',', 2)
+                can.setFillColorRGB(r, g, b)
+            elif field.font_color:
                 can.setFillColor(field.font_color)
             else:
                 can.setFillColorRGB(0, 0, 0)
@@ -79,44 +82,10 @@ class Document(models.Model):
     def render_pages(self, **kwargs):
 
         for page in self.pages.all():
+
             fields = {}
             for field in page.fields.all():
-                data = None
-
-                # Keep for backwards compatibility
-                val = field.obj_name or field.name
-
-                # Due to chaining fields, we need somewhere to store
-                # all the values for joining later.
-                composed_data = []
-
-                wanted_objects = val.split(',')
-
-                # The last object in the split list may be a join value,
-                # check it against what is allowed
-                joiner = ' '
-                if len(wanted_objects) > 1:
-                    possible_joiner = wanted_objects[-1]
-                    if possible_joiner in app_settings.FIELD_VALUE_JOINS:
-                        wanted_objects = wanted_objects[:-1]
-                        joiner = possible_joiner
-
-                # Fields can be chained by commas
-                for possible_field in wanted_objects:
-
-                    data = utils.get_field_data(possible_field, **kwargs)
-
-                    # We only care for data that exists, do not join on blanks
-                    if data:
-                        composed_data.append(force_str(data))
-
-                if composed_data:
-                    data = joiner.join(composed_data)
-
-                if data is None:
-                    data = field.get_default()
-
-                fields[field] = data
+                fields[field] = field.process(**kwargs)
 
             self._rendered_pages.append({
                 'template_page_number': page.number,
@@ -151,6 +120,7 @@ class Document(models.Model):
         if filename:
             with open(filename, 'wb') as fw:
                 fw.write(temp_file.read())
+            temp_file.close()
         else:
             return temp_file
 
@@ -163,6 +133,7 @@ class Document(models.Model):
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
         response.write(file.read())
+        file.close()
         return response
 
     def generate_page_layout_images(self, create_layout_images=True):
@@ -288,3 +259,49 @@ class Field(models.Model):
             return default
 
         return utils.convert_datetime_objects(self.default)
+
+    def process(self, **kwargs):
+        data = None
+
+        # Keep for backwards compatibility
+        val = self.obj_name or self.name
+
+        # Due to chaining fields, we need somewhere to store
+        # all the values for joining later.
+        composed_data = []
+
+        wanted_objects = val.split(app_settings.FIELD_CHAIN_SPLITTER)
+
+        # The last object in the split list may be a join value,
+        # check it against what is allowed
+        joiner = ' '
+        if len(wanted_objects) > 1:
+            possible_joiner = wanted_objects[-1]
+            if possible_joiner in app_settings.FIELD_VALUE_JOINS:
+                wanted_objects = wanted_objects[:-1]
+                joiner = possible_joiner
+
+        # Fields can be chained by commas
+        for possible_field in wanted_objects:
+
+            try:
+                possible_field, dt_format = possible_field.split(app_settings.FIELD_DATETIME_SPLITTER)
+            except ValueError:
+                dt_format = None
+
+            data = utils.get_field_data(possible_field, **kwargs)
+
+            if dt_format:
+                data = data.strftime(dt_format)
+
+            # We only care for data that exists, do not join on blanks
+            if data:
+                composed_data.append(force_str(data))
+
+        if composed_data:
+            data = joiner.join(composed_data)
+
+        if data is None:
+            data = self.get_default()
+
+        return data

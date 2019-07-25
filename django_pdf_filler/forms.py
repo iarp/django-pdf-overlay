@@ -38,7 +38,7 @@ def split_and_strip(value):
     # Check if the value supplied is permitted to have a whitespace at the end.
     if not value.strip():
         return ''
-    split_values = value.split(',')
+    split_values = value.split(app_settings.FIELD_CHAIN_SPLITTER)
 
     # Only 1 value in the split means the last character is not
     # a possible joiner to be used in field rendering.
