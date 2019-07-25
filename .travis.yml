@@ -17,8 +17,6 @@ env:
    - TOXENV=py36-django22
    - TOXENV=py36-djangomaster
    - TOXENV=docs
-   - TOXENV=checkqa
-   - TOXENV=standardjs
 
 matrix:
   fast_finish: true
@@ -56,7 +54,6 @@ cache:
     - $TRAVIS_BUILD_DIR/.tox
 
 install:
-  - if [[ $TOXENV == "standardjs" ]]; then nvm install 8; fi
   - pip install --upgrade pip wheel setuptools
   - pip install coveralls tox
 
