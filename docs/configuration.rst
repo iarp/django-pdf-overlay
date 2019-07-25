@@ -33,7 +33,21 @@ DJANGO_PDF_FILLER_GENERATE_LAYOUT_IMAGE (=True)
     Disabling this does require you to manually create the image and attach
     it to the page accordingly before field layout is possible.
 
-DJANGO_PDF_FILLER_FIELD_VALUE_JOINS (=', .|-_')
+DJANGO_PDF_FILLER_FIELD_VALUE_JOINS (=', .-_')
     When you chain object attributes in "obj name" on a field, you can select what
     value to join the chained values on. Default is a space, supply a string, list,
     tuple, or set to customize this.
+
+    * Comma
+    * Space
+    * Period
+    * Dash
+    * Underscore
+
+DJANGO_PDF_FILLER_FIELD_CHAIN_SPLITTER (='|')
+    Value used to split chained object.attributes on fields obj name value. Default is Pipe.
+
+DJANGO_PDF_FILLER_FIELD_DATETIME_SPLITTER (=':')
+    Value used to split object.attribute from its datetime formatting.
+
+    This value MUST be different than DJANGO_PDF_FILLER_FIELD_CHAIN_SPLITTER.
