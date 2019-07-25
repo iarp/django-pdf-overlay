@@ -1,7 +1,7 @@
 from django import forms
-
-from .models import Document, Page, Field
 from django_pdf_filler import app_settings
+
+from .models import Document, Field, Page
 
 
 class RegenPageLayouts(forms.ModelForm):

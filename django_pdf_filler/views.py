@@ -1,12 +1,12 @@
-from django.shortcuts import redirect
-from django.urls import reverse_lazy
-
-from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
 from django.contrib import messages
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
+from django.views.generic import (
+    CreateView, DeleteView, DetailView, ListView, UpdateView)
 
-from .models import Document, Page, Field
 from . import forms
+from .models import Document, Page
 
 
 class DocumentListView(PermissionRequiredMixin, ListView):

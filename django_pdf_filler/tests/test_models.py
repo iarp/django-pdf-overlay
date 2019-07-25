@@ -1,14 +1,13 @@
 import datetime
 import os
 import warnings
-from PyPDF2 import PdfFileReader
 
-from django.test import TestCase
 from django.conf import settings
-from django.http import HttpResponse
 from django.contrib.auth import get_user_model
-
-from django_pdf_filler.models import Document, Page, Field
+from django.http import HttpResponse
+from django.test import TestCase
+from django_pdf_filler.models import Document, Field
+from PyPDF2 import PdfFileReader
 
 
 class ModelTests(TestCase):

@@ -1,8 +1,6 @@
-import os
 import datetime
 import math
 
-from django.conf import settings
 from django_pdf_filler import app_settings
 
 

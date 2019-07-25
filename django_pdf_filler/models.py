@@ -1,21 +1,21 @@
+import copy
 import datetime
-from PyPDF2 import PdfFileWriter, PdfFileReader
 import io
 import os
-import tempfile
 import subprocess
-import copy
+import tempfile
 import warnings
-from reportlab.pdfgen import canvas
-from django.http import HttpResponse
-from django.conf import settings
+
+from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
 from django.db import models
-from django.contrib.auth.models import User
+from django.http import HttpResponse
 from django.urls import reverse
 from django.utils.encoding import force_str
+from PyPDF2 import PdfFileReader, PdfFileWriter
+from reportlab.pdfgen import canvas
 
-from . import validators, utils, app_settings
+from . import app_settings, utils, validators
 
 
 class OverwriteFileSystemStore(FileSystemStorage):

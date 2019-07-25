@@ -2,7 +2,6 @@ import os
 
 from django.conf import settings
 
-
 GENERATE_LAYOUT_IMAGE = getattr(settings, 'DJANGO_PDF_FILLER_GENERATE_LAYOUT_IMAGE', True)
 
 LOCAL_DOCUMENT_STORAGE = getattr(

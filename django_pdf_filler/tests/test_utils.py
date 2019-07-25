@@ -1,9 +1,7 @@
 import datetime
 
 from django.test import TestCase
-
-
-from django_pdf_filler import utils, forms
+from django_pdf_filler import forms, utils
 
 
 class UtilsTests(TestCase):

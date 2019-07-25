@@ -1,6 +1,6 @@
-from PyPDF2 import PdfFileReader
 from django.core.exceptions import ValidationError
 from django.db.models.fields.files import FieldFile
+from PyPDF2 import PdfFileReader
 
 
 def validate_pdf(value):
