@@ -1,4 +1,5 @@
 import os
+import sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -16,6 +17,13 @@ INSTALLED_APPS = [
     'django_pdf_filler.apps.DjangoPDFFillerConfig',
     'bootstrap4',
 ]
+
+# django-bootstrap4 is not required for our testing purposes
+# six is being moved into its own project from django3/master
+#   onwards and django-bootstrap currently requires six to be within django.
+# That requirement is causing our tests to fail when its their issue.
+if 'test' in sys.argv:
+    INSTALLED_APPS.remove('bootstrap4')
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
