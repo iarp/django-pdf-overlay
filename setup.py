@@ -39,6 +39,11 @@ METADATA = dict(
         'Framework :: Django :: 2.2',
     ],
     packages=find_packages(),
+    project_urls={
+        'Documentation': 'https://django-pdf-filler.readthedocs.io/en/latest/',
+        'Source': 'https://github.com/iarp/django-pdf-filler/',
+        'Tracker': 'https://github.com/iarp/django-pdf-filler/issues',
+    },
 )
 
 if __name__ == '__main__':
