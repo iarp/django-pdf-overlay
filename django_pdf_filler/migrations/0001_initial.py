@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=255, unique=True)),
-                ('file', models.FileField(storage=django_pdf_filler.models.OverwriteFileSystemStore(location='F:\\Projects\\django_pdf\\media\\django_pdf_filler\\documents'), upload_to='', validators=[django_pdf_filler.validators.validate_pdf])),
+                ('file', models.FileField(storage=django_pdf_filler.models.OverwriteFileSystemStore(), upload_to='', validators=[django_pdf_filler.validators.validate_pdf])),
                 ('times_used', models.PositiveIntegerField(default=0)),
                 ('inserted', models.DateTimeField(auto_now_add=True)),
                 ('updated', models.DateTimeField(auto_now=True)),

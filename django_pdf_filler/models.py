@@ -10,6 +10,7 @@ from django.db import models
 from django.http import HttpResponse
 from django.urls import reverse
 from django.utils.encoding import force_str
+from django.utils.deconstruct import deconstructible
 from PyPDF2 import PdfFileReader, PdfFileWriter
 from reportlab.pdfgen import canvas
 
@@ -17,7 +18,12 @@ from . import app_settings, utils, validators
 from .commands import get_commands
 
 
+@deconstructible
 class OverwriteFileSystemStore(FileSystemStorage):
+
+    def __init__(self, *args, **kwargs):
+        kwargs['location'] = app_settings.LOCAL_DOCUMENT_STORAGE
+        super(OverwriteFileSystemStore, self).__init__(*args, **kwargs)
 
     def get_available_name(self, name, max_length=None):
         path = os.path.join(self.location, name)
@@ -26,7 +32,7 @@ class OverwriteFileSystemStore(FileSystemStorage):
         return name
 
 
-local_document_storage = OverwriteFileSystemStore(location=app_settings.LOCAL_DOCUMENT_STORAGE)
+local_document_storage = OverwriteFileSystemStore()
 
 
 class Document(models.Model):
