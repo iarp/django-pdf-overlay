@@ -18,5 +18,5 @@ def validate_pdf(value):
 
     try:
         PdfFileReader(value)
-    except:
+    except: # noqa, bypass bare except
         raise ValidationError('File supplied failed to validate as a proper Document')

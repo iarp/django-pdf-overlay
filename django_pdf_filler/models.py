@@ -6,7 +6,6 @@ import subprocess
 import tempfile
 import warnings
 
-from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
 from django.db import models
 from django.http import HttpResponse
@@ -302,10 +301,9 @@ class Field(models.Model):
                     data = data.isoformat()
             elif dt_format:
                 # If we were supplied with a datetime format but the data is NOT a datetime object, flag a warning.
-                warnings.warn('Field "{}" with obj name "{}" was supplied with a datetime '
-                              'format of "{}" but type {} was found instead.'.format(
-                    self.name, possible_field, dt_format, type(data).__name__
-                ), SyntaxWarning)
+                msg = 'Field "{}" with obj name "{}" was supplied with a datetime ' \
+                      'format of "{}" but type {} was found instead.'
+                warnings.warn(msg.format(self.name, possible_field, dt_format, type(data).__name__), SyntaxWarning)
 
             # We only care for data that exists, do not join on blanks
             if data:
