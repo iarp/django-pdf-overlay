@@ -1,4 +1,4 @@
-VERSION = (1, 0, 2, 'final', 0)
+VERSION = (1, 0, 3, 'final', 0)
 
 __title__ = 'django-pdf-filler'
 __version_info__ = VERSION
