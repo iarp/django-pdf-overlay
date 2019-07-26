@@ -14,6 +14,7 @@ Contents
    installation
    configuration
    fields
+   commands
 
 
 Indices and tables

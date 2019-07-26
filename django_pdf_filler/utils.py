@@ -1,11 +1,19 @@
 import datetime
+import importlib
 import math
 
-from django_pdf_filler import app_settings
+from django_pdf_filler.compat import six
 
 
 def ordinal(n):
     return "%d%s" % (n, "tsnrhtdd"[(math.floor(n / 10) % 10 != 1) * (n % 10 < 4) * n % 10::4])
+
+
+def import_attribute(path):
+    assert isinstance(path, six.string_types)
+    pkg, attr = path.rsplit('.', 1)
+    ret = getattr(importlib.import_module(pkg), attr)
+    return ret
 
 
 def get_field_data(attribute_name, default=None, **kwargs):
@@ -71,18 +79,3 @@ def convert_datetime_objects(obj):
         return ordinal(now.day)
 
     return obj
-
-
-def get_pdf_to_image_command(path, page_number, image_location):
-
-    commands = app_settings.MAGICK_LOCATION.copy()
-
-    if app_settings.MAGICK_DENSITY:
-        commands.extend(['-density', app_settings.MAGICK_DENSITY])
-    if app_settings.MAGICK_FLATTEN:
-        commands.append('-flatten')
-
-    wanted_page = '{}[{}]'.format(path, page_number)
-    commands.extend([wanted_page, image_location])
-
-    return commands

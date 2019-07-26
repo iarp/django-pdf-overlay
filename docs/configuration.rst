@@ -54,3 +54,6 @@ DJANGO_PDF_FILLER_FIELD_DATETIME_SPLITTER (=':')
     Value used to split object.attribute from its datetime formatting.
 
     This value MUST be different than DJANGO_PDF_FILLER_FIELD_CHAIN_SPLITTER.
+
+DJANGO_PDF_FILLER_COMMANDS (='django_pdf_filler.commands.DefaultCommands')
+    Dot notated path to the Commands class allowing you to alter certain methods used within the program.

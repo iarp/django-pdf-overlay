@@ -2,7 +2,6 @@ import copy
 import datetime
 import io
 import os
-import subprocess
 import tempfile
 import warnings
 
@@ -15,6 +14,7 @@ from PyPDF2 import PdfFileReader, PdfFileWriter
 from reportlab.pdfgen import canvas
 
 from . import app_settings, utils, validators
+from .commands import get_commands
 
 
 class OverwriteFileSystemStore(FileSystemStorage):
@@ -202,25 +202,19 @@ class Page(models.Model):
 
     def convert_to_image(self):
 
-        filepath_raw, ext = self.document.file.path.rsplit('.', 1)
-
         if self.image:
             self.image.delete(save=False)
 
-        image_file = '{}_{}.jpg'.format(filepath_raw, self.number)
-
-        commands = utils.get_pdf_to_image_command(
-            path=self.document.file.path,
-            page_number=self.number,
-            image_location=image_file,
+        commands, image_file = get_commands().get_pdf_to_image_command(
+            document=self.document,
+            page=self,
         )
 
-        try:
-            process = subprocess.Popen(commands, stdout=subprocess.PIPE)
-            process.wait()
-        except FileNotFoundError:
-            self.document.delete()
-            raise FileNotFoundError('Unable to locate ImageMagick installation.')
+        get_commands().execute(
+            document=self.document,
+            page=self,
+            commands=commands,
+        )
 
         tmp_image_name, _ = self.document.file.name.rsplit('.', 1)
         image_filename = '{}_{}.jpg'.format(tmp_image_name, self.number)
