@@ -19,7 +19,7 @@ project settings:
 
 Example
 -------
-Overridding base class::
+my_proj/overrides.py::
 
     from django_pdf_filler.commands import DefaultCommands
 
@@ -27,3 +27,7 @@ Overridding base class::
         def execute(self, document, page, commands):
             # You can now change the system call used from our default of
             # subprocess.Popen to whatever you want.
+
+my_proj/settings.py::
+
+    DJANGO_PDF_FILLER_COMMANDS = 'my_proj.overrides.OverriddenCommands'
