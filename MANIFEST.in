@@ -1,6 +1,4 @@
-include AUTHORS
 include LICENSE
 include README.rst
-include ChangeLog.rst
 include test_settings.py
-recursive-include django_pdf_filler *.html *.txt *.xml *.po *.mo *.js *.pdf
+recursive-include django_pdf_filler *.html *.pdf
