@@ -207,32 +207,10 @@ class Page(models.Model):
         return reverse('django-pdf-filler:page-regen-image', args=[self.pk])
 
     def convert_to_image(self):
-
-        if self.image:
-            self.image.delete(save=False)
-
-        commands, image_file = get_commands().get_pdf_to_image_command(
+        return get_commands().convert_to_image(
             document=self.document,
-            page=self,
+            page=self
         )
-
-        get_commands().execute(
-            document=self.document,
-            page=self,
-            commands=commands,
-        )
-
-        tmp_image_name, _ = self.document.file.name.rsplit('.', 1)
-        image_filename = '{}_{}.jpg'.format(tmp_image_name, self.number)
-
-        if os.path.isfile(image_file):
-            with open(image_file, 'rb') as fo:
-                self.image.save(image_filename, fo)
-
-            os.remove(image_file)
-            return True
-
-        return False
 
 
 class Field(models.Model):
