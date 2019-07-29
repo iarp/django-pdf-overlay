@@ -9,8 +9,8 @@ from django.core.files.storage import FileSystemStorage
 from django.db import models
 from django.http import HttpResponse
 from django.urls import reverse
-from django.utils.encoding import force_str
 from django.utils.deconstruct import deconstructible
+from django.utils.encoding import force_str
 from PyPDF2 import PdfFileReader, PdfFileWriter
 from reportlab.pdfgen import canvas
 

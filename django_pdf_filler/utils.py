@@ -12,8 +12,7 @@ def ordinal(n):
 def import_attribute(path):
     assert isinstance(path, six.string_types)
     pkg, attr = path.rsplit('.', 1)
-    ret = getattr(importlib.import_module(pkg), attr)
-    return ret
+    return getattr(importlib.import_module(pkg), attr)
 
 
 def get_field_data(attribute_name, default=None, **kwargs):
