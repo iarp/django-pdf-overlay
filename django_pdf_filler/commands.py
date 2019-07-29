@@ -29,7 +29,7 @@ class DefaultCommands(object):
 
         return commands, temporary_image_filepath
 
-    def execute(self, commands, document, page, image_filepath):
+    def execute(self, document, page, commands):
         """ Executes the commands built in self.get_page_to_image_command.
 
         It is expected that when this method finishes running,
@@ -43,7 +43,7 @@ class DefaultCommands(object):
                 document.delete()
             raise FileNotFoundError('Unable to locate ImageMagick installation.')
 
-    def get_layout_image_filename(self, document, page, temporary_image_filepath):
+    def get_layout_image_filename(self, document, page):
         """ Return a string that represents the name of the final layout image filename. """
         tmp_image_name, _ = document.file.name.rsplit('.', 1)
         return '{}_{}.jpg'.format(tmp_image_name, page.number)
@@ -62,7 +62,6 @@ class DefaultCommands(object):
             document=document,
             page=page,
             commands=commands,
-            image_filepath=temporary_image_filepath,
         )
 
         if os.path.isfile(temporary_image_filepath):
@@ -70,7 +69,6 @@ class DefaultCommands(object):
             final_image_filename = self.get_layout_image_filename(
                 document=document,
                 page=page,
-                temporary_image_filepath=temporary_image_filepath,
             )
 
             with open(temporary_image_filepath, 'rb') as fo:

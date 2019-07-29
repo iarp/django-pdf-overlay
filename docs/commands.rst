@@ -17,6 +17,13 @@ project settings:
     from get_pdf_to_image_command above. No return needed. document and page are the
     objects being worked on.
 
+  - ``get_layout_image_filename(self, document, page)``
+    Returns a string containing the filename of the layout image
+    about to be saved to page.layout. Default is ``{document filename}_{page number}.jpg``
+
+  - ``convert_to_image(self, document, page)``
+    Combines all methods above and does the actual processing of data.
+
 Example
 -------
 my_proj/overrides.py::
