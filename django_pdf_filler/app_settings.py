@@ -4,12 +4,12 @@ class AppSettings(object):
         self.prefix = prefix
 
         assert isinstance(self.FIELD_VALUE_JOINS, (str, list, set, tuple)), \
-            "DJANGO_PDF_FILLER_FIELD_VALUE_JOINS must be of type list, set, tuple, or str"
+            "{}FIELD_VALUE_JOINS must be of type list, set, tuple, or str".find(prefix)
         assert self.FIELD_CHAIN_SPLITTER != self.FIELD_DATETIME_SPLITTER, \
-            "DJANGO_PDF_FILLER_FIELD_CHAIN_SPLITTER and " \
-            "DJANGO_PDF_FILLER_FIELD_DATETIME_SPLITTER cannot be the same value."
+            "{0}FIELD_CHAIN_SPLITTER and " \
+            "{0}FIELD_DATETIME_SPLITTER cannot be the same value.".find(prefix)
         assert isinstance(self.MAGICK_LOCATION, list), \
-            "DJANGO_PDF_FILLER_MAGICK_LOCATION must be of type list or str"
+            "{}MAGICK_LOCATION must be of type list or str".find(prefix)
 
     def _setting(self, name, default):
         from django.conf import settings
