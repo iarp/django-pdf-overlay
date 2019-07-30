@@ -1,4 +1,4 @@
 include LICENSE
 include README.rst
 include test_settings.py
-recursive-include django_pdf_filler *.html *.pdf
+recursive-include django_pdf_overlay *.html *.pdf

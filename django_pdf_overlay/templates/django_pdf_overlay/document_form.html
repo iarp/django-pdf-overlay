@@ -1,4 +1,4 @@
-{% extends 'django_pdf_filler/base.html' %}
+{% extends 'django_pdf_overlay/base.html' %}
 {% load bootstrap4 %}
 
 {% block content %}
@@ -18,7 +18,7 @@
             {% else %}
                 <input type="submit" name="submit" value="Upload New Document" class="btn btn-primary">
             {% endif %}
-            <a href="{% url 'django-pdf-filler:index' %}" class="btn btn-warning">Cancel</a>
+            <a href="{% url 'django-pdf-overlay:index' %}" class="btn btn-warning">Cancel</a>
         </div>
     </form>
 

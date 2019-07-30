@@ -2,7 +2,7 @@ import datetime
 import importlib
 import math
 
-from django_pdf_filler.compat import six
+from django_pdf_overlay.compat import six
 
 
 def ordinal(n):

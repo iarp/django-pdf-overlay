@@ -162,7 +162,7 @@ class Document(models.Model):
         self.pages.all().exclude(pk__in=existing_pages).delete()
 
     def get_absolute_url(self):
-        return reverse('django-pdf-filler:document-details', args=[self.pk])
+        return reverse('django-pdf-overlay:document-details', args=[self.pk])
 
     @property
     def total_fields_counter(self):
@@ -180,7 +180,7 @@ class Page(models.Model):
 
     document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='pages')
     number = models.PositiveIntegerField(default=0)
-    image = models.FileField(upload_to='django_pdf_filler/layouts/', blank=True, null=True)
+    image = models.FileField(upload_to='django_pdf_overlay/layouts/', blank=True, null=True)
 
     width = models.PositiveIntegerField(default=612)
     height = models.PositiveIntegerField(default=792)
@@ -192,19 +192,19 @@ class Page(models.Model):
         return '{} Page #{}'.format(self.document, self.number)
 
     def get_absolute_url(self):
-        return reverse('django-pdf-filler:page-layout', args=[self.pk])
+        return reverse('django-pdf-overlay:page-layout', args=[self.pk])
 
     def get_edit_url(self):
-        return reverse('django-pdf-filler:page-edit', args=[self.pk])
+        return reverse('django-pdf-overlay:page-edit', args=[self.pk])
 
     def get_fields_editor_url(self):
-        return reverse('django-pdf-filler:page-fields', args=[self.pk])
+        return reverse('django-pdf-overlay:page-fields', args=[self.pk])
 
     def get_fields_layout_url(self):
         return self.get_absolute_url()
 
     def get_image_regen_url(self):
-        return reverse('django-pdf-filler:page-regen-image', args=[self.pk])
+        return reverse('django-pdf-overlay:page-regen-image', args=[self.pk])
 
     def convert_to_image(self):
         return get_commands().convert_to_image(

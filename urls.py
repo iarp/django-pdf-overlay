@@ -20,6 +20,6 @@ from django.views.static import serve
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^django-pdf-filler/', include('django_pdf_filler.urls', namespace='django-pdf-filler')),
+    url(r'^django-pdf-overlay/', include('django_pdf_overlay.urls', namespace='django-pdf-overlay')),
     url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT,}),
 ]

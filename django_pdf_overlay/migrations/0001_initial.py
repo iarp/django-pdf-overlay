@@ -2,8 +2,8 @@
 
 from django.db import migrations, models
 import django.db.models.deletion
-import django_pdf_filler.models
-import django_pdf_filler.validators
+import django_pdf_overlay.models
+import django_pdf_overlay.validators
 
 
 class Migration(migrations.Migration):
@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=255, unique=True)),
-                ('file', models.FileField(storage=django_pdf_filler.models.OverwriteFileSystemStore(), upload_to='', validators=[django_pdf_filler.validators.validate_pdf])),
+                ('file', models.FileField(storage=django_pdf_overlay.models.OverwriteFileSystemStore(), upload_to='', validators=[django_pdf_overlay.validators.validate_pdf])),
                 ('times_used', models.PositiveIntegerField(default=0)),
                 ('inserted', models.DateTimeField(auto_now_add=True)),
                 ('updated', models.DateTimeField(auto_now=True)),
@@ -30,12 +30,12 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('number', models.PositiveIntegerField(default=0)),
-                ('image', models.FileField(blank=True, null=True, upload_to='django_pdf_filler/layouts/')),
+                ('image', models.FileField(blank=True, null=True, upload_to='django_pdf_overlay/layouts/')),
                 ('width', models.PositiveIntegerField(default=612)),
                 ('height', models.PositiveIntegerField(default=792)),
                 ('inserted', models.DateTimeField(auto_now_add=True)),
                 ('updated', models.DateTimeField(auto_now=True)),
-                ('document', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='pages', to='django_pdf_filler.Document')),
+                ('document', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='pages', to='django_pdf_overlay.Document')),
             ],
             options={
                 'ordering': ['number'],
@@ -56,7 +56,7 @@ class Migration(migrations.Migration):
                 ('font', models.CharField(default='Helvetica', max_length=50)),
                 ('inserted', models.DateTimeField(auto_now_add=True)),
                 ('updated', models.DateTimeField(auto_now=True)),
-                ('page', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='fields', to='django_pdf_filler.Page')),
+                ('page', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='fields', to='django_pdf_overlay.Page')),
             ],
         ),
     ]

@@ -1,4 +1,4 @@
-{% extends 'django_pdf_filler/base.html' %}
+{% extends 'django_pdf_overlay/base.html' %}
 
 {% block header %}
     <style type="text/css">
@@ -67,7 +67,7 @@
             draw();
 
             size_offset = new_offset;
-            localStorage.setItem('django_pdf_filler_layout_offset', size_offset);
+            localStorage.setItem('django_pdf_overlay_layout_offset', size_offset);
         }
 
         var ctx = canvas.getContext("2d");
@@ -104,11 +104,11 @@
         // this var will hold the index of the selected text
         var selectedText = -1;
 
-        if (localStorage.getItem('django_pdf_filler_layout_offset') === null) {
+        if (localStorage.getItem('django_pdf_overlay_layout_offset') === null) {
             change_offset(1);
         } else {
-            change_offset(localStorage.getItem('django_pdf_filler_layout_offset'));
-            document.getElementById('offset_selected').value = localStorage.getItem('django_pdf_filler_layout_offset');
+            change_offset(localStorage.getItem('django_pdf_overlay_layout_offset'));
+            document.getElementById('offset_selected').value = localStorage.getItem('django_pdf_overlay_layout_offset');
         }
 
         $('#offset_selected').on('change', function() {

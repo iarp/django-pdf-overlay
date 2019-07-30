@@ -1,4 +1,4 @@
-# https://travis-ci.com/iarp/django-pdf-filler
+# https://travis-ci.com/iarp/django-pdf-overlay
 dist: xenial
 language: python
 

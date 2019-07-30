@@ -2,7 +2,7 @@ from django.conf.urls import url
 
 from . import views
 
-app_name = 'django_pdf_filler'
+app_name = 'django_pdf_overlay'
 
 urlpatterns = [
     url(r'^$', views.DocumentListView.as_view(), name='index'),

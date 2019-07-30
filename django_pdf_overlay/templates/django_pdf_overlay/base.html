@@ -9,14 +9,14 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-    <title>Django PDF Filler</title>
+    <title>Django PDF Overlay</title>
 
     {% block header %}{% endblock %}
 </head>
 <body>
 
     <nav class="navbar navbar-expand-lg">
-        <span class="navbar-brand">Django PDF Filler</span>
+        <span class="navbar-brand">Django PDF Overlay</span>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -24,11 +24,11 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'django-pdf-filler:index' %}">Listing</a>
+                    <a class="nav-link" href="{% url 'django-pdf-overlay:index' %}">Listing</a>
                 </li>
-                {% if perms.django_pdf_filler.add_document %}
+                {% if perms.django_pdf_overlay.add_document %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'django-pdf-filler:create' %}">Create</a>
+                    <a class="nav-link" href="{% url 'django-pdf-overlay:create' %}">Create</a>
                 </li>
                 {% endif %}
             </ul>

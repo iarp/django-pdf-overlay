@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'django-pdf-filler'
+project = 'django-pdf-overlay'
 copyright = '2019, IARP'
 author = 'IARP'
 

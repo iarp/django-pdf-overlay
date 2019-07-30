@@ -1,12 +1,12 @@
-============================
-Welcome to Django PDF Filler
-============================
+=============================
+Welcome to Django PDF Overlay
+=============================
 
 This app is designed for developers working with PDF's
 
 Simple rundown:
 
-1. Supply a PDF document in the django-pdf-filler admin screen.
+1. Supply a PDF document in the django-pdf-overlay admin screen.
 2. Create fields that match what you need filled out on the document
 3. Using the layout tool, move the fields to their respective locations on the document
 4. In your view, add similar to the following::
@@ -16,7 +16,7 @@ Simple rundown:
     from django.contrib.auth import get_user_model
     u = get_user_model().objects.get(pk=1)
 
-    from django_pdf_filler.models import Document
+    from django_pdf_overlay.models import Document
     doc = Document.objects.get(name='My Document')
 
     # Here we render the page(s) on the PDF

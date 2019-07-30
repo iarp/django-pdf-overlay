@@ -1,5 +1,5 @@
 from django import forms
-from django_pdf_filler import app_settings
+from django_pdf_overlay import app_settings
 
 from .models import Document, Field, Page
 

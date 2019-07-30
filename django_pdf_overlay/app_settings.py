@@ -25,7 +25,7 @@ class AppSettings(object):
         import os
         return self._setting(
             'LOCAL_DOCUMENT_STORAGE',
-            os.path.join(settings.BASE_DIR, 'media', 'django_pdf_filler', 'documents')
+            os.path.join(settings.BASE_DIR, 'media', 'django_pdf_overlay', 'documents')
         )
 
     @property
@@ -65,11 +65,11 @@ class AppSettings(object):
 
     @property
     def COMMANDS(self):
-        return self._setting('COMMANDS', 'django_pdf_filler.commands.DefaultCommands')
+        return self._setting('COMMANDS', 'django_pdf_overlay.commands.DefaultCommands')
 
 
 import sys  # noqa
 
-app_settings = AppSettings('DJANGO_PDF_FILLER_')
+app_settings = AppSettings('DJANGO_PDF_OVERLAY_')
 app_settings.__name__ = __name__
 sys.modules[__name__] = app_settings

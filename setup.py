@@ -4,16 +4,16 @@ from setuptools import find_packages, setup
 long_description = io.open('README.rst', encoding='utf-8').read()
 
 # Dynamically calculate the version based on allauth.VERSION.
-version = __import__('django_pdf_filler').__version__
+version = __import__('django_pdf_overlay').__version__
 
 METADATA = dict(
-    name='django-pdf-filler',
+    name='django-pdf-overlay',
     version=version,
     author='IARP',
     author_email='iarp.opensource@gmail.com',
     description='Fill PDFs from model instances',
     long_description=long_description,
-    url='http://github.com/iarp/django-pdf-filler',
+    url='http://github.com/iarp/django-pdf-overlay',
     keywords='django pdf overlay',
     tests_require=[],
     install_requires=['Django >= 1.11', 'django-bootstrap4', 'PyPDF2', 'reportlab'],
@@ -40,9 +40,9 @@ METADATA = dict(
     ],
     packages=find_packages(),
     project_urls={
-        'Documentation': 'https://django-pdf-filler.readthedocs.io/en/latest/',
-        'Source': 'https://github.com/iarp/django-pdf-filler/',
-        'Tracker': 'https://github.com/iarp/django-pdf-filler/issues',
+        'Documentation': 'https://django-pdf-overlay.readthedocs.io/en/latest/',
+        'Source': 'https://github.com/iarp/django-pdf-overlay/',
+        'Tracker': 'https://github.com/iarp/django-pdf-overlay/issues',
     },
 )
 

@@ -1,10 +1,10 @@
-{% extends 'django_pdf_filler/base.html' %}
+{% extends 'django_pdf_overlay/base.html' %}
 
 {% block content %}
 
     <h1>Confirm Deletion of {{ object.name }}</h1>
 
-    <form method="post" action="{% url 'django-pdf-filler:document-delete' object.pk %}">{% csrf_token %}
+    <form method="post" action="{% url 'django-pdf-overlay:document-delete' object.pk %}">{% csrf_token %}
 
         {% if object.file %}
             <p>This will delete the PDF located in: <strong>{{ object.file.path }}</strong></p>
@@ -17,7 +17,7 @@
 
         <div class="form-actions">
             <input type="submit" name="submit" value="Delete" class="btn btn-danger">
-            <a href="{% url 'django-pdf-filler:index' %}" class="btn btn-primary">Cancel</a>
+            <a href="{% url 'django-pdf-overlay:index' %}" class="btn btn-primary">Cancel</a>
         </div>
     </form>
 

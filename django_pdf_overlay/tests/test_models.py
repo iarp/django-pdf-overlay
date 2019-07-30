@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse
 from django.test import TestCase
-from django_pdf_filler.models import Document, Field
+from django_pdf_overlay.models import Document, Field
 from PyPDF2 import PdfFileReader
 
 
@@ -22,7 +22,7 @@ class ModelTests(TestCase):
         super(ModelTests, self).tearDown()
 
     def setup_test_document(self):
-        path_to_file = os.path.join(settings.BASE_DIR, 'django_pdf_filler', 'tests', 'fixtures',
+        path_to_file = os.path.join(settings.BASE_DIR, 'django_pdf_overlay', 'tests', 'fixtures',
                                     'OHFRowansLawAcknowledgementForm.pdf')
         document = Document(name='Tests Document')
         with open(path_to_file, 'rb') as fo:

@@ -24,13 +24,13 @@ Django
 
 Python package::
 
-    pip install django-pdf-filler
+    pip install django-pdf-overlay
 
 settings.py::
 
     INSTALLED_APPS = (
         ...
-        'django_pdf_filler',
+        'django_pdf_overlay',
         'bootstrap4',
         ...
     )
@@ -39,7 +39,7 @@ urls.py::
 
     urlpatterns = [
         ...
-        url(r'^django-pdf-filler/', include('django_pdf_filler.urls')),
+        url(r'^django-pdf-overlay/', include('django_pdf_overlay.urls')),
         ...
     ]
 
@@ -47,7 +47,7 @@ urls.py::
 Development Settings
 --------------------
 
-django-pdf-filler requires your project to have media settings configured for
+django-pdf-overlay requires your project to have media settings configured for
 the layout images to appear properly.
 
 During development (`DEBUG=True`) that means you may not see the layout image at all.
@@ -79,10 +79,10 @@ Run migrate to create the necessary tables::
 
     ./manage.py migrate
 
-Start your server and then head to the Django PDF Filler
-admin area (e.g. http://127.0.0.1:8000/django-pdf-filler/)
+Start your server and then head to the Django PDF Overlay
+admin area (e.g. http://127.0.0.1:8000/django-pdf-overlay/)
 
-Django PDF Filler Admin uses built-in django permissions, superusers
+Django PDF Overlay Admin uses built-in django permissions, superusers
 will always have full access, everyone else will require permissions.
 
 Create a new group called `PDF Editors` and add the wanted Permissions for

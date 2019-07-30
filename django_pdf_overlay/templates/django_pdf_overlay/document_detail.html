@@ -1,4 +1,4 @@
-{% extends 'django_pdf_filler/base.html' %}
+{% extends 'django_pdf_overlay/base.html' %}
 
 {% block header %}
     <style type="text/css">
@@ -10,11 +10,11 @@
 
 {% block content %}
     <div style="float: right;">
-        {% if perms.django_pdf_filler.change_document %}
-            <a href="{% url 'django-pdf-filler:document-edit' pk=object.pk %}" class="btn btn-primary">Edit</a>
+        {% if perms.django_pdf_overlay.change_document %}
+            <a href="{% url 'django-pdf-overlay:document-edit' pk=object.pk %}" class="btn btn-primary">Edit</a>
         {% endif %}
-        {% if perms.django_pdf_filler.delete_document %}
-            <a href="{% url 'django-pdf-filler:document-delete' pk=object.pk %}" class="btn btn-danger">Delete</a>
+        {% if perms.django_pdf_overlay.delete_document %}
+            <a href="{% url 'django-pdf-overlay:document-delete' pk=object.pk %}" class="btn btn-danger">Delete</a>
         {% endif %}
     </div>
     <h1>{{ object.name }}</h1>
@@ -32,17 +32,17 @@
                 <tr>
                     <th scope="row">{{ page.number }}</th>
                     <td>
-                        {% if perms.django_pdf_filler.change_field %}
+                        {% if perms.django_pdf_overlay.change_field %}
                             <a class="btn btn-info" href="{{ page.get_fields_editor_url }}">{{ page.fields.count }} field{{ page.fields.count|pluralize:",s" }}</a>
                         {% else %}
                             <a class="btn btn-info disabled" href="#">{{ page.fields.count }} field{{ page.fields.count|pluralize:",s" }}</a>
                         {% endif %}
                     </td>
                     <td>
-                        {% if perms.django_pdf_filler.change_page and page.image %}
+                        {% if perms.django_pdf_overlay.change_page and page.image %}
                             <a class="btn btn-primary" href="{{ page.get_fields_layout_url }}">Field Layout</a>
                         {% elif not page.image %}
-                            {% if perms.django_pdf_filler.change_page %}
+                            {% if perms.django_pdf_overlay.change_page %}
                                 <a href="{{ page.get_edit_url }}">Requires Layout Image</a>
                             {% else %}
                                 Requires Layout Image

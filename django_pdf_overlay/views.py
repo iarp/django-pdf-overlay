@@ -16,7 +16,7 @@ from .models import Document, Page
 
 class DocumentListView(PermissionRequiredMixin, ListView):
     model = Document
-    permission_required = 'django_pdf_filler.view_document'
+    permission_required = 'django_pdf_overlay.view_document'
 
     def get_queryset(self):
         return super(DocumentListView, self).get_queryset().order_by('-inserted')
@@ -25,31 +25,31 @@ class DocumentListView(PermissionRequiredMixin, ListView):
 class DocumentCreateView(PermissionRequiredMixin, CreateView):
     model = Document
     form_class = forms.DocumentCreateForm
-    permission_required = 'django_pdf_filler.add_document'
+    permission_required = 'django_pdf_overlay.add_document'
 
 
 class DocumentDetailView(PermissionRequiredMixin, DetailView):
     model = Document
-    permission_required = 'django_pdf_filler.view_document'
+    permission_required = 'django_pdf_overlay.view_document'
 
 
 class DocumentUpdateView(PermissionRequiredMixin, UpdateView):
     model = Document
     form_class = forms.DocumentUpdateForm
-    permission_required = 'django_pdf_filler.change_document'
+    permission_required = 'django_pdf_overlay.change_document'
 
 
 class DocumentDeleteView(PermissionRequiredMixin, DeleteView):
     model = Document
-    success_url = reverse_lazy('django-pdf-filler:index')
-    permission_required = 'django_pdf_filler.delete_document'
+    success_url = reverse_lazy('django-pdf-overlay:index')
+    permission_required = 'django_pdf_overlay.delete_document'
 
 
 class PageDetailView(PermissionRequiredMixin, DetailView):
     model = Page
-    permission_required = 'django_pdf_filler.change_page'
+    permission_required = 'django_pdf_overlay.change_page'
 
-    template_name = 'django_pdf_filler/field_layout.html'
+    template_name = 'django_pdf_overlay/field_layout.html'
 
     def post(self, request, **kwargs):
         changeable_fields = ['x', 'y', 'font_size', 'font_color', 'font']
@@ -84,7 +84,7 @@ class PageDetailView(PermissionRequiredMixin, DetailView):
 
 class PageEditView(PermissionRequiredMixin, UpdateView):
     model = Page
-    permission_required = 'django_pdf_filler.change_page'
+    permission_required = 'django_pdf_overlay.change_page'
     form_class = forms.PageEditorForm
 
 
@@ -92,8 +92,8 @@ class PageCopyFieldsView(PermissionRequiredMixin, DetailView):
     model = Page
     http_method_names = ['post']
     permission_required = (
-        'django_pdf_filler.change_page',
-        'django_pdf_filler.change_field'
+        'django_pdf_overlay.change_page',
+        'django_pdf_overlay.change_field'
     )
 
     def post(self, request, pk):
@@ -123,17 +123,17 @@ class PageCopyFieldsView(PermissionRequiredMixin, DetailView):
 
 class PageFieldsView(PermissionRequiredMixin, UpdateView):
     model = Page
-    permission_required = 'django_pdf_filler.change_field'
+    permission_required = 'django_pdf_overlay.change_field'
     fields = '__all__'
 
-    template_name = 'django_pdf_filler/field_editor.html'
+    template_name = 'django_pdf_overlay/field_editor.html'
 
     def get_context_data(self, **kwargs):
         context = super(PageFieldsView, self).get_context_data(**kwargs)
 
         form = forms.page_fields_formset(
-            can_delete=self.request.user.has_perm('django_pdf_filler.delete_field'),
-            extra=self.request.user.has_perm('django_pdf_filler.add_field')
+            can_delete=self.request.user.has_perm('django_pdf_overlay.delete_field'),
+            extra=self.request.user.has_perm('django_pdf_overlay.add_field')
         )
         context['formset'] = form(
             data=self.request.POST if self.request.method == 'POST' else None,
@@ -157,7 +157,7 @@ class PageFieldsView(PermissionRequiredMixin, UpdateView):
 
 class PageRegenerateImageView(PermissionRequiredMixin, DetailView):
     model = Page
-    permission_required = 'django_pdf_filler.view_page'
+    permission_required = 'django_pdf_overlay.view_page'
 
     def get(self, request, *args, **kwargs):
         page = self.get_object()  # type: Page

@@ -1,6 +1,6 @@
 VERSION = (1, 0, 4, 'final', 0)
 
-__title__ = 'django-pdf-filler'
+__title__ = 'django-pdf-overlay'
 __version_info__ = VERSION
 __version__ = '.'.join(map(str, VERSION[:3])) + ('-{}{}'.format(
     VERSION[3], VERSION[4] or '') if VERSION[3] != 'final' else '')
