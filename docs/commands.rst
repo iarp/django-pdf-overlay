@@ -4,7 +4,7 @@ Commands
 You can override the following class and its methods to change certain behavior
 
 Create your custom class extending DefaultCommands and supply the dot
-notation path to your class with ``django_pdf_overlay_COMMANDS`` in your
+notation path to your class with ``DJANGO_PDF_OVERLAY_COMMANDS`` in your
 project settings:
 
 - ``django_pdf_overlay.commands.DefaultCommands``
@@ -37,4 +37,4 @@ my_proj/overrides.py::
 
 my_proj/settings.py::
 
-    django_pdf_overlay_COMMANDS = 'my_proj.overrides.OverriddenCommands'
+    DJANGO_PDF_OVERLAY_COMMANDS = 'my_proj.overrides.OverriddenCommands'

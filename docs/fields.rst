@@ -94,5 +94,5 @@ after the chained object attributes::
     >>> user.first_name|user.last_name|-
     John-Doe
 
-See `django_pdf_overlay_FIELD_VALUE_JOINS <configuration.html>`__ on configuration for all possible join
+See `DJANGO_PDF_OVERLAY_FIELD_VALUE_JOINS <configuration.html>`__ on configuration for all possible join
 values permitted by default.
