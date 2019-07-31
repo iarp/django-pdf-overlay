@@ -1,7 +1,6 @@
 import datetime
 import warnings
 
-from django.contrib.auth import get_user_model
 from django.http import HttpResponse
 from django_pdf_overlay.models import Field
 from .base_test_classes import BaseTestClassMethods
@@ -117,39 +116,47 @@ class ModelTests(BaseTestClassMethods):
         p2.fields.create(name='p2t2')
         self.assertEqual(4, doc.total_fields_counter)
 
-    def test_field_process(self):
-        user = get_user_model().objects.create_user(
-            username='test',
-            password='12345',
-            first_name='John',
-            last_name='Doe',
-            email='test@example.com'
-        )
-        field = Field(
-            name='FullName',
-            obj_name='user.first_name|user.last_name'
-        )
-        self.assertEqual('John Doe', field.process(user=user))
+    def get_test_field(self, name='FullName', obj_name='user.first_name|user.last_name', **kwargs):
+        return Field(name=name, obj_name=obj_name, **kwargs)
 
-        field.obj_name = 'user.first_name|user.last_name|,'
-        self.assertEqual('John,Doe', field.process(user=user))
+    def test_field_process_basic(self):
+        field = self.get_test_field(obj_name='user.first_name|user.last_name')
+        self.assertEqual('John Doe', field.process(user=self.user))
+
+    def test_field_process_join_on_comma_and_b(self):
+        field = self.get_test_field(obj_name='user.first_name|user.last_name|,')
+        self.assertEqual('John,Doe', field.process(user=self.user))
 
         field.obj_name = 'user.first_name|user.last_name|b'
-        self.assertEqual('John Doe', field.process(user=user))
+        self.assertEqual('John Doe', field.process(user=self.user))
 
-        field.obj_name = 'user.date_joined:%Y-%m-%d'
-        self.assertEqual(user.date_joined.strftime('%Y-%m-%d'), field.process(user=user))
+    def test_field_process_field_is_datetime_formatted(self):
+        field = self.get_test_field(obj_name='user.date_joined:%Y-%m-%d')
+        self.assertEqual(self.user.date_joined.strftime('%Y-%m-%d'), field.process(user=self.user))
 
-        field.obj_name = 'user.date_joined:%Y-%m-%d|user.first_name|user.last_name'
-        self.assertEqual('{} John Doe'.format(user.date_joined.strftime('%Y-%m-%d')), field.process(user=user))
+    def test_field_process_multiple_fields_with_datetime(self):
+        field = self.get_test_field(obj_name='user.date_joined:%Y-%m-%d|user.first_name|user.last_name')
+        self.assertEqual(
+            '{} John Doe'.format(self.user.date_joined.strftime('%Y-%m-%d')),
+            field.process(user=self.user)
+        )
 
-        field.obj_name = 'user.date_joined'
-        self.assertEqual(user.date_joined.isoformat(), field.process(user=user))
+    def test_field_process_field_datetime_default(self):
+        field = self.get_test_field(obj_name='user.date_joined')
+        self.assertEqual(self.user.date_joined.isoformat(), field.process(user=self.user))
 
-        field.obj_name = 'user.first_name:%Y-%m-%d'
+    def test_field_process_datetime_format_supplied_to_str_value(self):
+        field = self.get_test_field(obj_name='user.first_name:%Y-%m-%d')
         with warnings.catch_warnings(record=True) as w:
-            val = field.process(user=user)
+            val = field.process(user=self.user)
             self.assertEqual('John', val)
             msg = w[-1]
             self.assertTrue(issubclass(msg.category, SyntaxWarning))
             self.assertIn('Field "FullName" with obj name "user.first_name"', str(msg.message))
+            self.assertIn('"%Y-%m-%d"', str(msg.message))
+            self.assertIn('type {}'.format(type(self.user.first_name).__name__), str(msg.message))
+
+    def test_field_process_default(self):
+        field = self.get_test_field(default='month_long')
+        now = datetime.datetime.now()
+        self.assertEqual(now.strftime("%B"), field.process(user=self))

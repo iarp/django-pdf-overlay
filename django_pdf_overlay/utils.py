@@ -43,7 +43,7 @@ def get_field_data(attribute_name, default=None, **kwargs):
         val = get_val(tmp, attribute_name)
         if val is not None:
             return val
-        return tmp
+        return default
 
     for tmp in kwargs.values():
         val = get_val(tmp, attribute_name)

@@ -17,6 +17,7 @@ class UtilsTests(TestCase):
         self.assertEqual('%Y-%m-%d', utils.convert_datetime_objects('%Y-%m-%d'))
         self.assertEqual(now.strftime('%B'), utils.convert_datetime_objects('month_long'))
         self.assertEqual(utils.ordinal(now.day), utils.convert_datetime_objects('day'))
+        self.assertEqual(str(now.year)[2:], utils.convert_datetime_objects('year_short'))
 
     def test_ordinal(self):
         self.assertEqual('1st', utils.ordinal(1))
@@ -43,6 +44,7 @@ class UtilsTests(TestCase):
         self.assertEqual('here in callable method', utils.get_field_data('obj.custom_callable', obj=obj))
 
         self.assertEqual('here in default', utils.get_field_data('missing', default='here in default', obj=obj))
+        self.assertEqual('here in default', utils.get_field_data('obj.missing', default='here in default', obj=obj))
 
         def method_test():
             return 'here in method_test'
