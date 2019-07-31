@@ -10,6 +10,7 @@ class UtilsTests(TestCase):
         items = ['d:', 'dt:', 'datetime:']
         self.assertTrue(utils.startswith_many('dt:%Y-%m-%d', items))
         self.assertFalse(utils.startswith_many('non-existent:%Y-%m-%d', items))
+        self.assertFalse(utils.startswith_many('no-delim %Y-%m-%d', items))
 
     def test_convert_datetime_objects(self):
         now = datetime.datetime.now()
@@ -26,7 +27,7 @@ class UtilsTests(TestCase):
         self.assertEqual('4th', utils.ordinal(4))
         self.assertEqual('5th', utils.ordinal(5))
 
-    def test_get_field_data(self):
+    def test_get_field_data_with_object(self):
         class TestClass(object):
             name = 'here in test class'
 
@@ -46,6 +47,7 @@ class UtilsTests(TestCase):
         self.assertEqual('here in default', utils.get_field_data('missing', default='here in default', obj=obj))
         self.assertEqual('here in default', utils.get_field_data('obj.missing', default='here in default', obj=obj))
 
+    def test_get_field_data_dist_object(self):
         def method_test():
             return 'here in method_test'
 
