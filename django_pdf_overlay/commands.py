@@ -17,7 +17,7 @@ class DefaultCommands(object):
         filepath_raw, ext = document.file.path.rsplit('.', 1)
         temporary_image_filepath = '{}_{}.jpg'.format(filepath_raw, page.number)
 
-        commands = app_settings.MAGICK_LOCATION.copy()
+        commands = app_settings.MAGICK_LOCATION
 
         if app_settings.MAGICK_DENSITY:
             commands.extend(['-density', app_settings.MAGICK_DENSITY])
@@ -29,7 +29,7 @@ class DefaultCommands(object):
 
         return commands, temporary_image_filepath
 
-    def execute(self, document, page, commands):
+    def execute(self, document, page, commands):  # pragma: no cover
         """ Executes the commands built in self.get_page_to_image_command.
 
         It is expected that when this method finishes running,
@@ -48,7 +48,7 @@ class DefaultCommands(object):
         tmp_image_name, _ = document.file.name.rsplit('.', 1)
         return '{}_{}.jpg'.format(tmp_image_name, page.number)
 
-    def convert_to_image(self, document, page):
+    def convert_to_image(self, document, page):  # pragma: no cover
         """ Brings together all the methods above and saves the image to the page object. """
         if page.image:
             page.image.delete(save=False)

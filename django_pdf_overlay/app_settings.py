@@ -49,7 +49,7 @@ class AppSettings(object):
             if os.name == 'nt':
                 location = ['magick.exe', 'convert']
 
-        return location
+        return list(location)
 
     @property
     def FIELD_VALUE_JOINS(self):
