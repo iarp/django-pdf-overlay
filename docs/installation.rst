@@ -39,7 +39,7 @@ urls.py::
 
     urlpatterns = [
         ...
-        url(r'^django-pdf-overlay/', include('django_pdf_overlay.urls')),
+        url(r'^django-pdf-overlay/', include('django_pdf_overlay.urls', namespace='django-pdf-overlay')),
         ...
     ]
 

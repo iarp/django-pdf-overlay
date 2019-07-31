@@ -16,7 +16,7 @@ METADATA = dict(
     url='http://github.com/iarp/django-pdf-overlay',
     keywords='django pdf overlay',
     tests_require=[],
-    install_requires=['Django >= 1.11', 'django-bootstrap4', 'PyPDF2', 'reportlab'],
+    install_requires=['Django >= 1.11', 'django-bootstrap4', 'PyPDF2', 'reportlab', 'six'],
     include_package_data=True,
     classifiers=[
         'Development Status :: 4 - Beta',

@@ -72,7 +72,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-# django_pdf_overlay_GENERATE_LAYOUT_IMAGE = True
-# django_pdf_overlay_LOCAL_DOCUMENT_STORAGE = os.path.join(BASE_DIR, 'media', 'django_pdf_overlay', 'documents')
-# django_pdf_overlay_MAGICK_LOCATION = None
-# django_pdf_overlay_MAGICK_DENSITY = 300
+# DJANGO_PDF_OVERLAY_GENERATE_LAYOUT_IMAGE = True
+# DJANGO_PDF_OVERLAY_LOCAL_DOCUMENT_STORAGE = os.path.join(BASE_DIR, 'media', 'django_pdf_overlay', 'documents')
+# DJANGO_PDF_OVERLAY_MAGICK_LOCATION = None
+# DJANGO_PDF_OVERLAY_MAGICK_DENSITY = 300

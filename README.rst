@@ -2,13 +2,31 @@
 Welcome to Django PDF Overlay
 =============================
 
-This app is designed for developers working with PDF's
+.. image:: https://badge.fury.io/py/django-pdf-overlay.svg
+   :target: http://badge.fury.io/py/django-pdf-overlay
 
-Simple rundown:
+.. image:: https://travis-ci.org/iarp/django-pdf-overlay.svg
+   :target: https://travis-ci.org/iarp/django-pdf-overlay
+
+.. image:: https://coveralls.io/repos/iarp/django-pdf-overlay/badge.svg?branch=master
+   :alt: Coverage Status
+   :target: https://coveralls.io/r/iarp/django-pdf-overlay
+
+Source code
+  http://github.com/iarp/django-pdf-overlay
+
+Documentation
+  https://django-pdf-overlay.readthedocs.io/en/latest/
+
+Overview
+========
+
+Designed to make it easy for developers working with PDF's to create views,
+pass model data, and have an easy to use GUI for field CRUD and layout.
 
 1. Supply a PDF document in the django-pdf-overlay admin screen.
-2. Create fields that match what you need filled out on the document
-3. Using the layout tool, move the fields to their respective locations on the document
+2. Create fields that match what you need filled out on the document.
+3. Using the layout tool, move the fields to their respective locations on the document.
 4. In your view, add similar to the following::
 
     # In this example I will load a user and pass it
