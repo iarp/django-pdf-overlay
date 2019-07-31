@@ -28,7 +28,7 @@ class BaseTestClassMethods(TestCase):
         document.setup_document(create_layout_images=False)
         self.created_documents.append(document)
 
-        self.assertEqual(2, document.pages.count())
+        self.assertEqual(4, document.pages.count())
         self.assertEqual(0, document.total_fields_counter)
         self.assertEqual([], document._rendered_pages)
 

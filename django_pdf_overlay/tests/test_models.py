@@ -12,11 +12,11 @@ class ModelTests(BaseTestClassMethods):
     def test_document_single_render_limited_to_certain_pages(self):
         doc = self.setup_test_document()
         doc.render_pages()
-        self.assertEqual(2, len(doc._rendered_pages))
+        self.assertEqual(4, len(doc._rendered_pages))
 
         file = doc.render_as_document()
         template_pdf = PdfFileReader(file)
-        self.assertEqual(2, template_pdf.getNumPages())
+        self.assertEqual(4, template_pdf.getNumPages())
 
         file = doc.render_as_document(pages=[0])
         template_pdf = PdfFileReader(file)
@@ -34,13 +34,13 @@ class ModelTests(BaseTestClassMethods):
         doc = self.setup_test_document()
 
         doc.render_pages()
-        self.assertEqual(2, len(doc._rendered_pages))
-        doc.render_pages()
         self.assertEqual(4, len(doc._rendered_pages))
+        doc.render_pages()
+        self.assertEqual(8, len(doc._rendered_pages))
 
         file = doc.render_as_document()
         template_pdf = PdfFileReader(file)
-        self.assertEqual(4, template_pdf.getNumPages())
+        self.assertEqual(8, template_pdf.getNumPages())
 
         file = doc.render_as_document(pages=[0])
         template_pdf = PdfFileReader(file)
@@ -74,16 +74,16 @@ class ModelTests(BaseTestClassMethods):
         doc = self.setup_test_document()
 
         doc.render_pages()
-        self.assertEqual(2, len(doc._rendered_pages))
+        self.assertEqual(4, len(doc._rendered_pages))
 
         doc.render_as_document().close()
-        self.assertEqual(2, len(doc._rendered_pages))
+        self.assertEqual(4, len(doc._rendered_pages))
 
         doc.render_as_response()
-        self.assertEqual(2, len(doc._rendered_pages))
+        self.assertEqual(4, len(doc._rendered_pages))
 
         doc.render_pages()
-        self.assertEqual(4, len(doc._rendered_pages))
+        self.assertEqual(8, len(doc._rendered_pages))
 
     def test_document_render_as_response_is_valid(self):
         doc = self.setup_test_document()
