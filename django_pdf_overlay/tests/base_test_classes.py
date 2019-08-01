@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
-from django_pdf_overlay.models import Document
+from django_pdf_overlay.models import Document, Field
 
 
 class BaseTestClassMethods(TestCase):
@@ -28,11 +28,16 @@ class BaseTestClassMethods(TestCase):
         document.setup_document(create_layout_images=False)
         self.created_documents.append(document)
 
-        self.assertEqual(4, document.pages.count())
+        self.document_page_count = 4
+
+        self.assertEqual(self.document_page_count, document.pages.count())
         self.assertEqual(0, document.total_fields_counter)
         self.assertEqual([], document._rendered_pages)
 
         return document
+
+    def setup_test_field(self, name='FullName', obj_name='user.first_name|user.last_name', **kwargs):
+        return Field(name=name, obj_name=obj_name, **kwargs)
 
     def setup_test_user(self, username='test', password='12345',
                         first_name='John', last_name='Doe',
