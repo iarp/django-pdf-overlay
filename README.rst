@@ -12,6 +12,9 @@ Welcome to Django PDF Overlay
    :alt: Coverage Status
    :target: https://coveralls.io/r/iarp/django-pdf-overlay
 
+.. image:: https://img.shields.io/pypi/pyversions/django-pdf-overlay
+   :target: https://pypi.org/project/django-pdf-overlay/
+
 Source code
   http://github.com/iarp/django-pdf-overlay
 
