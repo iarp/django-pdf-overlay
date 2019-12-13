@@ -14,7 +14,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'django_pdf_overlay.apps.DjangoPDFOverlayConfig',
+    'django_pdf_overlay',
     'bootstrap4',
 ]
 

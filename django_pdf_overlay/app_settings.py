@@ -4,12 +4,12 @@ class AppSettings(object):
         self.prefix = prefix
 
         assert isinstance(self.FIELD_VALUE_JOINS, (str, list, set, tuple)), \
-            "{}FIELD_VALUE_JOINS must be of type list, set, tuple, or str".find(prefix)
+            "{}FIELD_VALUE_JOINS must be of type list, set, tuple, or str".format(prefix)
         assert self.FIELD_CHAIN_SPLITTER != self.FIELD_DATETIME_SPLITTER, \
             "{0}FIELD_CHAIN_SPLITTER and " \
-            "{0}FIELD_DATETIME_SPLITTER cannot be the same value.".find(prefix)
+            "{0}FIELD_DATETIME_SPLITTER cannot be the same value.".format(prefix)
         assert isinstance(self.MAGICK_LOCATION, list), \
-            "{}MAGICK_LOCATION must be of type list or str".find(prefix)
+            "{}MAGICK_LOCATION must be of type list or str".format(prefix)
 
     def _setting(self, name, default):
         from django.conf import settings

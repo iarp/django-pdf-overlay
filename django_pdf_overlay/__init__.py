@@ -7,3 +7,5 @@ __version__ = '.'.join(map(str, VERSION[:3])) + ('-{}{}'.format(
 __author__ = 'IARP'
 __license__ = 'MIT'
 __copyright__ = 'Copyright 2019 IARP and contributors'
+
+default_app_config = 'django_pdf_overlay.apps.DjangoPDFOverlayConfig'
