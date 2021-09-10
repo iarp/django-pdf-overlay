@@ -53,11 +53,11 @@ class Document(models.Model):
         self._rendered_pages = []
 
     @staticmethod
-    def _render_page(fields):
+    def _render_page(page, fields):
 
         packet = io.BytesIO()
 
-        can = canvas.Canvas(packet, pagesize=(612, 792), bottomup=False)
+        can = canvas.Canvas(packet, pagesize=(page.width, page.height), bottomup=False)
 
         for field, data in fields.items():
 
@@ -95,7 +95,7 @@ class Document(models.Model):
 
             self._rendered_pages.append({
                 'template_page_number': page.number,
-                'page': self._render_page(fields)
+                'page': self._render_page(page, fields)
             })
 
         Document.objects.filter(pk=self.pk).update(times_used=models.F('times_used')+1)
