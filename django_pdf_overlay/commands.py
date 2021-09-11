@@ -36,7 +36,7 @@ class DefaultCommands(object):
         the image should be created.
         """
         try:
-            process = subprocess.Popen(commands, shell=True)
+            process = subprocess.Popen(commands)
             process.wait()
         except FileNotFoundError:
             if document:
