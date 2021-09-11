@@ -54,17 +54,11 @@ def get_field_data(attribute_name, default=None, **kwargs):
     return default
 
 
-def startswith_many(string, items):
-    for item in items:
-        if string.startswith(item):
-            return True
-
-
 def convert_datetime_objects(obj):
     now = datetime.datetime.now()
 
     d = obj.lower()
-    if startswith_many(d, ['dt:', 'datetime:', 'date:']):
+    if d.startswith(('dt:', 'datetime:', 'date:')):
         t, f = obj.split(':', 1)
         return now.strftime(f)
 
