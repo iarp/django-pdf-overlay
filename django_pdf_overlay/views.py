@@ -24,7 +24,7 @@ class DocumentListView(PermissionRequiredMixin, ListView):
 
 class DocumentCreateView(PermissionRequiredMixin, CreateView):
     model = Document
-    form_class = forms.DocumentCreateForm
+    form_class = forms.DocumentForm
     permission_required = 'django_pdf_overlay.add_document'
 
 
@@ -35,7 +35,7 @@ class DocumentDetailView(PermissionRequiredMixin, DetailView):
 
 class DocumentUpdateView(PermissionRequiredMixin, UpdateView):
     model = Document
-    form_class = forms.DocumentUpdateForm
+    form_class = forms.DocumentForm
     permission_required = 'django_pdf_overlay.change_document'
 
 

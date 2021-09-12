@@ -4,15 +4,7 @@ from django_pdf_overlay import app_settings
 from .models import Document, Field, Page
 
 
-class RegenPageLayouts(forms.ModelForm):
-
-    def save(self, commit=True):
-        obj = super(RegenPageLayouts, self).save(commit=commit)
-        obj.setup_document()
-        return obj
-
-
-class DocumentCreateForm(RegenPageLayouts):
+class DocumentForm(forms.ModelForm):
     class Meta:
         model = Document
         fields = ['name', 'file']
@@ -20,18 +12,17 @@ class DocumentCreateForm(RegenPageLayouts):
     name = forms.CharField(required=False)
 
     def clean(self):
-        cleaned_data = super(DocumentCreateForm, self).clean()
+        cleaned_data = super(DocumentForm, self).clean()
 
         if not cleaned_data.get('name') and cleaned_data.get('file'):
             cleaned_data['name'] = cleaned_data['file'].name.replace('.pdf', '')
 
         return cleaned_data
 
-
-class DocumentUpdateForm(RegenPageLayouts):
-    class Meta:
-        model = Document
-        fields = ['file']
+    def save(self, commit=True):
+        obj = super(DocumentForm, self).save(commit=commit)
+        obj.setup_document()
+        return obj
 
 
 def split_and_strip(value):
@@ -55,7 +46,7 @@ def split_and_strip(value):
 class FieldEditorForm(forms.ModelForm):
     class Meta:
         model = Field
-        fields = ['name', 'default', 'obj_name', 'font_size', 'font', 'font_color']
+        fields = ['name', 'default', 'obj_name', 'font_size', 'font', 'font_color', 'x', 'y']
 
         help_texts = {
             'obj_name': "object.attribute usage when rending data in the pdf. "
