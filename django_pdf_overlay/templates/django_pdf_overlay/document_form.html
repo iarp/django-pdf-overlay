@@ -11,7 +11,7 @@
     <hr />
 
     <form method="post" enctype="multipart/form-data">{% csrf_token %}
-        {% bootstrap_form form %}
+        {% bootstrap_form form layout='horizontal' %}
         <div class="form-actions">
             {% if object.pk %}
                 <input type="submit" name="submit" value="Replace Document" class="btn btn-primary">

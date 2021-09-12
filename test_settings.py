@@ -35,6 +35,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+SESSION_COOKIE_NAME = 'django-pdf-overlay'
+
 ROOT_URLCONF = 'urls'
 
 TEMPLATES = [
