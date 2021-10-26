@@ -1,4 +1,4 @@
-VERSION = (1, 1, 1, 'final', 0)
+VERSION = (3, 0, 0, 'final', 0)
 
 __title__ = 'django-pdf-overlay'
 __version_info__ = VERSION
