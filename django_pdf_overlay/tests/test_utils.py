@@ -6,12 +6,6 @@ from django_pdf_overlay import forms, utils
 
 class UtilsTests(TestCase):
 
-    def test_startswith_many(self):
-        items = ['d:', 'dt:', 'datetime:']
-        self.assertTrue(utils.startswith_many('dt:%Y-%m-%d', items))
-        self.assertFalse(utils.startswith_many('non-existent:%Y-%m-%d', items))
-        self.assertFalse(utils.startswith_many('no-delim %Y-%m-%d', items))
-
     def test_convert_datetime_objects(self):
         now = datetime.datetime.now()
         self.assertEqual(now.strftime('%Y-%m-%d'), utils.convert_datetime_objects('dt:%Y-%m-%d'))
