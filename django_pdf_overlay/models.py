@@ -130,14 +130,14 @@ class Document(models.Model):
         else:
             return temp_file
 
-    def render_as_response(self, filename=None, pages=None):
+    def render_as_response(self, filename=None, pages=None, content_disposition='attachment'):
         file = self.render_as_document(pages=pages)
 
         if not filename:
             filename = self.file.name
 
         response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
+        response['Content-Disposition'] = '{}; filename="{}"'.format(content_disposition, filename)
         response.write(file.read())
         file.close()
         return response
