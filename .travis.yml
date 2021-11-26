@@ -35,7 +35,7 @@ matrix:
 
     # Django Master
     - python: 3.9
-      env: TOXENV=py38-djangomaster
+      env: TOXENV=py39-djangomaster
 
     # Django Master
     - python: 3.10

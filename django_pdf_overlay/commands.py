@@ -1,8 +1,11 @@
+import logging
 import os
 import subprocess
 
 from . import app_settings
 from .utils import import_attribute
+
+log = logging.getLogger('django_pdf_overlay.comments')
 
 
 class DefaultCommands(object):
@@ -36,6 +39,7 @@ class DefaultCommands(object):
         the image should be created.
         """
         try:
+            log.debug(commands)
             process = subprocess.Popen(commands)
             process.wait()
         except FileNotFoundError:
