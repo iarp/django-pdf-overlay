@@ -18,6 +18,8 @@ Requirements
 
   - Only required if you want auto-generated layout images.
   - If you do not want to or cannot install ImageMagick see `GENERATE_LAYOUT_IMAGE <configuration.html>`__
+  - Theres an issue with Imagemagick disallowing PDF interactions, you need to edit the policy.xml file (linux
+        location: /etc/ImageMagick-6/policy.xml) and change the line `<policy domain="coder" rights="none" pattern="PDF" />` changing "none" to "read|write".
 
 Django
 ------
@@ -39,7 +41,7 @@ urls.py::
 
     urlpatterns = [
         ...
-        url(r'^django-pdf-overlay/', include('django_pdf_overlay.urls', namespace='django-pdf-overlay')),
+        path('django-pdf-overlay/', include('django_pdf_overlay.urls', namespace='django-pdf-overlay')),
         ...
     ]
 
@@ -65,10 +67,10 @@ urls.py::
     from django.conf import settings
 
     if settings.DEBUG:
-        from django.conf.urls import url
+        from django.urls import re_path
         from django.views.static import serve
         urlpatterns = urlpatterns + [
-            url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT,}),
+            re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT,}),
         ]
 
 
