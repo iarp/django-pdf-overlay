@@ -1,4 +1,4 @@
-pypdf2
+pypdf
 reportlab
 django>=1.11
 django-bootstrap4

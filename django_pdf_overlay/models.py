@@ -5,13 +5,13 @@ import os
 import tempfile
 import warnings
 
-from django.core.files.storage import FileSystemStorage
+from django.core.files.storage import FileSystemStorage, InMemoryStorage
 from django.db import models
 from django.http import HttpResponse
 from django.urls import reverse
 from django.utils.deconstruct import deconstructible
 from django.utils.encoding import force_str
-from PyPDF2 import PdfFileReader, PdfFileWriter
+from pypdf import PdfReader, PdfWriter
 from reportlab.pdfgen import canvas
 
 from . import app_settings, utils, validators
@@ -19,7 +19,7 @@ from .commands import get_commands
 
 
 @deconstructible
-class OverwriteFileSystemStore(FileSystemStorage):
+class OverwriteFileSystemStore(InMemoryStorage):
 
     def __init__(self, *args, **kwargs):
         kwargs['location'] = app_settings.LOCAL_DOCUMENT_STORAGE
@@ -83,7 +83,7 @@ class Document(models.Model):
         can.save()
 
         packet.seek(0)
-        return PdfFileReader(packet)
+        return PdfReader(packet)
 
     def render_pages(self, **kwargs):
 
@@ -103,21 +103,21 @@ class Document(models.Model):
 
     def render_as_document(self, filename=None, pages=None):
 
-        output = PdfFileWriter()
+        output = PdfWriter()
 
-        template_pdf = PdfFileReader(self.file.file)
+        template_pdf = PdfReader(self.file.file)
 
         for page in self._rendered_pages:
 
             if isinstance(pages, (set, list)) and page['template_page_number'] not in pages:
                 continue
 
-            template_page = copy.copy(template_pdf.getPage(page['template_page_number']))
+            template_page = copy.copy(template_pdf.get_page(page['template_page_number']))
             try:
-                template_page.mergePage(page['page'].getPage(0))
+                template_page.merge_page(page['page'].get_page(0))
             except IndexError:
                 pass
-            output.addPage(template_page)
+            output.add_page(template_page)
 
         temp_file = tempfile.TemporaryFile()
         output.write(temp_file)
@@ -143,12 +143,12 @@ class Document(models.Model):
         return response
 
     def setup_document(self, create_layout_images=True):
-        template_pdf = PdfFileReader(self.file.file)
+        template_pdf = PdfReader(self.file.file)
 
         existing_pages = set()
 
-        for x in range(template_pdf.getNumPages()):
-            _, _, width, height = template_pdf.getPage(x).mediaBox
+        for x in range(template_pdf.get_num_pages()):
+            _, _, width, height = template_pdf.get_page(x).mediabox
             page, _ = self.pages.update_or_create(number=x, defaults={
                 'width': width,
                 'height': height,

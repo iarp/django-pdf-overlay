@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db.models.fields.files import FieldFile
-from PyPDF2 import PdfFileReader
+from pypdf import PdfReader
 
 
 def validate_pdf(value):
@@ -17,6 +17,6 @@ def validate_pdf(value):
         raise ValidationError('File supplied is not a PDF')
 
     try:
-        PdfFileReader(value)
+        PdfReader(value)
     except: # noqa, bypass bare except
         raise ValidationError('File supplied failed to validate as a proper Document')
