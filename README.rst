@@ -2,24 +2,12 @@
 Welcome to Django PDF Overlay
 =============================
 
-.. image:: https://badge.fury.io/py/django-pdf-overlay.svg
-   :target: http://badge.fury.io/py/django-pdf-overlay
-
-.. image:: https://travis-ci.org/iarp/django-pdf-overlay.svg
-   :target: https://travis-ci.org/iarp/django-pdf-overlay
-
 .. image:: https://coveralls.io/repos/iarp/django-pdf-overlay/badge.svg?branch=master
    :alt: Coverage Status
    :target: https://coveralls.io/r/iarp/django-pdf-overlay
 
-.. image:: https://img.shields.io/pypi/pyversions/django-pdf-overlay
-   :target: https://pypi.org/project/django-pdf-overlay/
-
 Source code
   http://github.com/iarp/django-pdf-overlay
-
-Documentation
-  https://django-pdf-overlay.readthedocs.io/en/latest/
 
 Overview
 ========

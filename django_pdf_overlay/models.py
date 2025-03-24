@@ -5,7 +5,7 @@ import os
 import tempfile
 import warnings
 
-from django.core.files.storage import FileSystemStorage, InMemoryStorage
+from django.core.files.storage import FileSystemStorage
 from django.db import models
 from django.http import HttpResponse
 from django.urls import reverse
@@ -19,7 +19,7 @@ from .commands import get_commands
 
 
 @deconstructible
-class OverwriteFileSystemStore(InMemoryStorage):
+class OverwriteFileSystemStore(FileSystemStorage):
 
     def __init__(self, *args, **kwargs):
         kwargs['location'] = app_settings.LOCAL_DOCUMENT_STORAGE

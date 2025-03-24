@@ -18,13 +18,6 @@ INSTALLED_APPS = [
     'bootstrap4',
 ]
 
-# django-bootstrap4 is not required for our testing purposes
-# six is being moved into its own project from django3/master
-#   onwards and django-bootstrap currently requires six to be within django.
-# That requirement is causing our tests to fail when its their issue.
-if 'test' in sys.argv:
-    INSTALLED_APPS.remove('bootstrap4')
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -78,3 +71,21 @@ MEDIA_URL = '/media/'
 # DJANGO_PDF_OVERLAY_LOCAL_DOCUMENT_STORAGE = os.path.join(BASE_DIR, 'media', 'django_pdf_overlay', 'documents')
 # DJANGO_PDF_OVERLAY_MAGICK_LOCATION = None
 # DJANGO_PDF_OVERLAY_MAGICK_DENSITY = 300
+
+from django.contrib.auth.hashers import PBKDF2PasswordHasher
+
+class MyPBKDF2PasswordHasher(PBKDF2PasswordHasher):
+    """
+    A subclass of PBKDF2PasswordHasher that uses 1 iteration.
+
+    This is for test purposes only. Never use anywhere else.
+    """
+
+    iterations = 1
+
+
+PASSWORD_HASHERS = [
+    "test_settings.MyPBKDF2PasswordHasher",
+]
+
+USE_TZ = True
