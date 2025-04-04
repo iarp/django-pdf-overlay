@@ -20,7 +20,7 @@ class BaseTestClassMethods(TestCase):
         super(BaseTestClassMethods, self).tearDown()
 
     def setup_test_document(self):
-        path_to_file = os.path.join(settings.BASE_DIR, 'django_pdf_overlay', 'tests',
+        path_to_file = os.path.join(settings.BASE_DIR, 'tests',
                                     'fixtures', 'sample.pdf')
         document = Document(name='Tests Document')
         with open(path_to_file, 'rb') as fo:

@@ -4,7 +4,7 @@ import warnings
 from django.http import HttpResponse
 from django_pdf_overlay.models import Field
 from .base_test_classes import BaseTestClassMethods
-from PyPDF2 import PdfFileReader
+from pypdf import PdfReader
 
 
 class ModelTests(BaseTestClassMethods):
@@ -15,20 +15,24 @@ class ModelTests(BaseTestClassMethods):
         self.assertEqual(self.document_page_count, len(doc._rendered_pages))
 
         file = doc.render_as_document()
-        template_pdf = PdfFileReader(file)
-        self.assertEqual(self.document_page_count, template_pdf.getNumPages())
+        template_pdf = PdfReader(file)
+        self.assertEqual(self.document_page_count, template_pdf.get_num_pages())
+        file.close()
 
         file = doc.render_as_document(pages=[0])
-        template_pdf = PdfFileReader(file)
-        self.assertEqual(1, template_pdf.getNumPages())
+        template_pdf = PdfReader(file)
+        self.assertEqual(1, template_pdf.get_num_pages())
+        file.close()
 
         file = doc.render_as_document(pages=[0, 1])
-        template_pdf = PdfFileReader(file)
-        self.assertEqual(2, template_pdf.getNumPages())
+        template_pdf = PdfReader(file)
+        self.assertEqual(2, template_pdf.get_num_pages())
+        file.close()
 
         file = doc.render_as_document(pages=[])
-        template_pdf = PdfFileReader(file)
-        self.assertEqual(0, template_pdf.getNumPages())
+        template_pdf = PdfReader(file)
+        self.assertEqual(0, template_pdf.get_num_pages())
+        file.close()
 
     def test_document_multi_render_limited_to_certain_pages(self):
         doc = self.setup_test_document()
@@ -39,20 +43,24 @@ class ModelTests(BaseTestClassMethods):
         self.assertEqual(self.document_page_count * 2, len(doc._rendered_pages))
 
         file = doc.render_as_document()
-        template_pdf = PdfFileReader(file)
-        self.assertEqual(self.document_page_count * 2, template_pdf.getNumPages())
+        template_pdf = PdfReader(file)
+        self.assertEqual(self.document_page_count * 2, template_pdf.get_num_pages())
+        file.close()
 
         file = doc.render_as_document(pages=[0])
-        template_pdf = PdfFileReader(file)
-        self.assertEqual(2, template_pdf.getNumPages())
+        template_pdf = PdfReader(file)
+        self.assertEqual(2, template_pdf.get_num_pages())
+        file.close()
 
         file = doc.render_as_document(pages=[0, 1])
-        template_pdf = PdfFileReader(file)
-        self.assertEqual(4, template_pdf.getNumPages())
+        template_pdf = PdfReader(file)
+        self.assertEqual(4, template_pdf.get_num_pages())
+        file.close()
 
         file = doc.render_as_document(pages=[])
-        template_pdf = PdfFileReader(file)
-        self.assertEqual(0, template_pdf.getNumPages())
+        template_pdf = PdfReader(file)
+        self.assertEqual(0, template_pdf.get_num_pages())
+        file.close()
 
     def test_document_used_counter(self):
         doc = self.setup_test_document()

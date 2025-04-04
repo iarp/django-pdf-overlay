@@ -1,7 +1,6 @@
 import datetime
 import importlib
 import math
-import six
 
 
 def ordinal(n):
@@ -9,7 +8,7 @@ def ordinal(n):
 
 
 def import_attribute(path):
-    assert isinstance(path, six.string_types)
+    assert isinstance(path, str)
     pkg, attr = path.rsplit('.', 1)
     return getattr(importlib.import_module(pkg), attr)
 

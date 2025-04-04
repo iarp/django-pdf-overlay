@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "django-pdf-overlay"
+description = "Designed to make it easy for developers working with PDF's to create views, model data, and have an easy to use GUI for field CRUD and layout."
+version = "2025.3.24"
+requires-python = ">= 3.10"
+readme = "README.rst"
+keywords = ["django", "pdf", "overlay"]
+authors = [
+  {name = "IARP", email = "iarp.opensource@gmail.com"},
+]
+classifiers = [
+	"Development Status :: 3 - Alpha",
+
+	"License :: OSI Approved :: MIT License",
+
+	"Programming Language :: Python :: 3.10",
+	"Programming Language :: Python :: 3.11",
+	"Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+	"django>=4.2",
+	"django-bootstrap4",
+	"reportlab",
+	"pypdf",
+]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["django_pdf_overlay*"]
+exclude = ['docs*', 'media*', 'tests*']
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "test_settings"
+python_files = [
+    "tests.py",
+    "test_*.py",
+    "*_tests.py"
+]
+
+[tool.coverage.run]
+include = [
+	"django_pdf_overlay/*"
+]
+
+[tool.coverage.html]
+directory = "coverage_html_report"
+
+[tool.coverage.report]
+exclude_also = [
+    "pragma: no cover",
+]

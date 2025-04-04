@@ -127,3 +127,5 @@ dmypy.json
 *.jpg
 temp.py
 docs/_build
+coverage_html_report/
+html/
